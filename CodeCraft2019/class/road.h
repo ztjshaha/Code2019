@@ -3,18 +3,18 @@
 #include <iostream>
 #include "string"
 using namespace std;
-#define MAX_ROAD    2000
+#define Road_Num    2000
 //你的代码写在这里
 class Road{
  public:
     int id;
-    int road_length;
+    int length;
     int limit_speed;
-    int lane_num;
+    int channel;
     int start;
     int end;
-    int flag_twoway;
-   void stringTOnum1(string s,  int * pdata);
+    int flag_bothway;
+  // void stringTOnum1(string s,  int * pdata);
 
 };
 #endif

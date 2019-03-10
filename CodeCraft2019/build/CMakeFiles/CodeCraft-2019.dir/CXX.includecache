@@ -6,6 +6,18 @@
 
 #IncludeRegexTransform: 
 
+../class/car.h
+iostream
+-
+string
+../class/string
+
+../class/cross.h
+iostream
+-
+string
+../class/string
+
 ../class/road.h
 iostream
 -
@@ -23,4 +35,8 @@ fstream
 /home/zt/work/Code2019/CodeCraft2019/fstream
 road.h
 /home/zt/work/Code2019/CodeCraft2019/road.h
+car.h
+/home/zt/work/Code2019/CodeCraft2019/car.h
+cross.h
+/home/zt/work/Code2019/CodeCraft2019/cross.h
 
