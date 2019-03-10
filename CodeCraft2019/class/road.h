@@ -6,6 +6,7 @@
 //#include <stdlib.h>
 using namespace std;
 #define Road_Num    2000
+/*
 typedef struct CarState
 {  
     int flag;
@@ -15,7 +16,7 @@ typedef struct CarState
     int car_speed;
     vector <int> car_passed;
     vector <int> car_pass;
-};
+};*/
 //你的代码写在这里
 class Road{
  public:
@@ -27,7 +28,7 @@ class Road{
     int end;
     int flag_bothway;
     
-void set(int channel,int length,int flag_bothway);
+//void set(int channel,int length,int flag_bothway);
 
    
 

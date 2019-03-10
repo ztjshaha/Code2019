@@ -10,15 +10,16 @@
 #include "car.h"
 #include "cross.h"
 #include "lib/lib.h"
+#include "lib/list.h"
 /*****************************************/
 /*************Define lib&class****************/
 /*****************************************/
 using namespace std;
-
+List<float> ls1;
 Road 	road[Road_Num];
 Car 	car[Car_Num];
 Cross   cross[Cross_Num];
-struct  CarState a[1][1][1];
+//struct  CarState a[1][1][1];
 int main(int argc, char *argv[])
 {
 	std::cout << "Begin"<< std::endl;
@@ -151,6 +152,9 @@ int main(int argc, char *argv[])
 	/*******************************Test OK!*******************************************/
 	/**********************************************************************************/
 	// struct  CarState a[road.id][road.channel][road.length][road.flag_bothway];
+	List<float> ls1;//creat list
+	ls1.add(5,5000,10,5,3,2,1);
+	ls1.resShow();
 	// TODO:process
 	// TODO:write output file
 	
