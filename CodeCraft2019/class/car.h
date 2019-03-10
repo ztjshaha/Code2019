@@ -7,10 +7,13 @@ using namespace std;
 //你的代码写在这里
 class Car{
  public:
+   
     int id;
     int start;
     int end;
     int speed_max;
     int start_time;
+
+    
 };
 #endif

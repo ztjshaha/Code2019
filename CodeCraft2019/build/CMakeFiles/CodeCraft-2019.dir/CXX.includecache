@@ -23,6 +23,8 @@ iostream
 -
 string
 ../class/string
+vector
+../class/vector
 
 /home/zt/work/Code2019/CodeCraft2019/CodeCraft-2019.cpp
 iostream
@@ -39,4 +41,8 @@ car.h
 /home/zt/work/Code2019/CodeCraft2019/car.h
 cross.h
 /home/zt/work/Code2019/CodeCraft2019/cross.h
+lib/lib.h
+/home/zt/work/Code2019/CodeCraft2019/lib/lib.h
+
+/home/zt/work/Code2019/CodeCraft2019/lib/lib.h
 

@@ -2,19 +2,23 @@
 #include "string"
 #include <sys/time.h> 
 #include "fstream"
+
 /*****************************************/
-/**********Add myself class .h************/
+/**********Add myself lib.h&class .h************/
 /*****************************************/
 #include "road.h"
 #include "car.h"
 #include "cross.h"
+#include "lib/lib.h"
+/*****************************************/
+/*************Define lib&class****************/
+/*****************************************/
 using namespace std;
-/*****************************************/
-/*************Define class****************/
-/*****************************************/
+
 Road 	road[Road_Num];
 Car 	car[Car_Num];
 Cross   cross[Cross_Num];
+struct  CarState a[1][1][1];
 int main(int argc, char *argv[])
 {
 	std::cout << "Begin"<< std::endl;
@@ -39,13 +43,13 @@ int main(int argc, char *argv[])
 	std::cout<<"read start"<<std::endl;
 	while(!road_file.eof())
 	{
-	char str_tr[50];
-	road_file.getline(str_tr,'\r\n');
-	if(str_tr[0]=='#');
-        if(str_tr[0]=='(')
+	char str_road[50];
+	road_file.getline(str_road,'\r\n');
+	if(str_road[0]=='#');
+        if(str_road[0]=='(')
          {
 	   
-	   sscanf(str_tr,"(%d,%d,%d,%d,%d,%d,%d)", 	&(road[road_num].id),
+	   sscanf(str_road,"(%d,%d,%d,%d,%d,%d,%d)", 	&(road[road_num].id),
 							&(road[road_num].length),
 							&(road[road_num].limit_speed),
 							&(road[road_num].channel),
@@ -58,13 +62,13 @@ int main(int argc, char *argv[])
        road_file.close();
 	while(!car_file.eof())
 	{
-	char str_tc[50];
-	car_file.getline(str_tc,'\r\n');
-	if(str_tc[0]=='#') ;
-	if(str_tc[0]=='(')
+	char str_car[50];
+	car_file.getline(str_car,'\r\n');
+	if(str_car[0]=='#') ;
+	if(str_car[0]=='(')
 	  {
 	   
-	   sscanf(str_tc,"(%d,%d,%d,%d,%d)",   		&(car[car_num].id),
+	   sscanf(str_car,"(%d,%d,%d,%d,%d)",   	&(car[car_num].id),
 							&(car[car_num].start),
 							&(car[car_num].end),
 							&(car[car_num].speed_max),
@@ -75,13 +79,13 @@ int main(int argc, char *argv[])
        car_file.close();
     while(!cross_file.eof())
       {
-       char str_ts[50];
-       cross_file.getline(str_ts,'\r\n');
-       if(str_ts[0]=='#');
-       if(str_ts[0]=='(')
+       char str_cross[50];
+       cross_file.getline(str_cross,'\r\n');
+       if(str_cross[0]=='#');
+       if(str_cross[0]=='(')
          {
 	   
-	   sscanf(str_ts,"(%d,%d,%d,%d,%d)",   		&(cross[cross_num].cross_id),
+	   sscanf(str_cross,"(%d,%d,%d,%d,%d)",   	&(cross[cross_num].cross_id),
 							&(cross[cross_num].road_id[0]),
 							&(cross[cross_num].road_id[1]),
 							&(cross[cross_num].road_id[2]),
@@ -143,6 +147,10 @@ int main(int argc, char *argv[])
 		 cout<<endl;
 	    }
 	    cout <<map3d [0][1][0]<<endl;
+	/**********************************************************************************/
+	/*******************************Test OK!*******************************************/
+	/**********************************************************************************/
+	// struct  CarState a[road.id][road.channel][road.length][road.flag_bothway];
 	// TODO:process
 	// TODO:write output file
 	
