@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../class/road.h
+iostream
+-
+string
+../class/string
+
+/home/zt/work/Code2019/CodeCraft2019/CodeCraft-2019.cpp
+iostream
+/home/zt/work/Code2019/CodeCraft2019/iostream
+string
+/home/zt/work/Code2019/CodeCraft2019/string
+sys/time.h
+-
+fstream
+/home/zt/work/Code2019/CodeCraft2019/fstream
+road.h
+/home/zt/work/Code2019/CodeCraft2019/road.h
+
