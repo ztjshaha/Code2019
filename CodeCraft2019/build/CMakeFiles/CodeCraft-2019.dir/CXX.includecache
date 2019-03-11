@@ -18,6 +18,14 @@ iostream
 string
 ../class/string
 
+../class/map.h
+iostream
+-
+string
+../class/string
+road.h
+../class/road.h
+
 ../class/road.h
 iostream
 -
@@ -45,6 +53,8 @@ lib/lib.h
 /home/zt/work/Code2019/CodeCraft2019/lib/lib.h
 lib/list.h
 /home/zt/work/Code2019/CodeCraft2019/lib/list.h
+map.h
+/home/zt/work/Code2019/CodeCraft2019/map.h
 
 /home/zt/work/Code2019/CodeCraft2019/lib/lib.h
 

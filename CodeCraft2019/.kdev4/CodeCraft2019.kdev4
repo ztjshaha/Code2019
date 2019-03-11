@@ -12,4 +12,25 @@ Build Type=Debug
 CMake Binary=file:///usr/bin/cmake
 Environment Profile=
 Extra Arguments=
-Install Directory=
+Install Directory=file:///usr/local
+
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=CodeCraft-2019
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x1a\x00C\x00o\x00d\x00e\x00C\x00r\x00a\x00f\x00t\x002\x000\x001\x009\x00\x00\x00\x1c\x00C\x00o\x00d\x00e\x00C\x00r\x00a\x00f\x00t\x00-\x002\x000\x001\x009)
+Dependency Action=Build
+EnvironmentGroup=default
+Executable=file:///home/zt/work/Code2019/CodeCraft2019/
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=CodeCraft2019,CodeCraft-2019
+Use External Terminal=false
+Working Directory=
+isExecutable=false
