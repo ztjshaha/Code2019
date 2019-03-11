@@ -2,7 +2,7 @@
 #include "string"
 #include <sys/time.h> 
 #include "fstream"
-
+#include <limits.h>
 /*****************************************/
 /**********Add myself lib.h&class .h************/
 /*****************************************/
@@ -21,16 +21,17 @@ Road 	road[Road_Num];
 Car 	car[Car_Num];
 Cross   cross[Cross_Num];
 map map1;
-#define MAX 100000
+#define MAX 100000//__INT_MAX__
+
 //struct  CarState a[1][1][1];
 std::vector<std::vector<std::vector<int> > > a(4);
 extern int road_num,car_num,cross_num;
 vector<vector<int> > road_length;
-vector<int> dist;
-vector<bool> visited;
+//vector<int> dist;
+//vector<bool> visited;
 
 
-void Dijkstra(int number,int cross_num)
+/*void Dijkstra(int number,int cross_num)
 {
 	//标记为访问过
 	visited[number] = true;
@@ -62,7 +63,65 @@ void Dijkstra(int number,int cross_num)
 	
 	
 }
+*/
 
+
+void Dijkstra(int number,int cross_num)
+{
+  int dis[cross_num];        //存储源点到各个顶点的最短路径
+  vector<int> path[cross_num];
+    
+  for (int i = 0; i < cross_num; i++)              //初始化
+	{
+		dis[i] = road_length[number][i];
+		path[i].push_back(number);
+		path[i].push_back(i+1);
+	}
+	for (int i = 1; i < cross_num; i++)
+	{
+		for (int j = 0; j < cross_num; j++)
+		{
+				//dis[i] = min(dis[i],dis[j] + L[j][i]);
+			if (dis[i] > dis[j] + road_length[j][i])               //求源点到节点的最短路径，利用现有的L矩阵
+			{
+				dis[i] = dis[j] + road_length[j][i];		
+ 
+				path[i].clear();                         //保存并更新路径
+				path[i].insert(path[i].end(), path[j].begin(),path[j].end());
+				path[i].push_back(i+1);
+			}
+ 
+		}
+		for (int m = 0; m < i; m++)              //更新节点最短路径
+		{
+			for(int j = 0; j < cross_num; j++)
+			{
+				if (dis[m] > dis[j] + road_length[j][m])
+				{
+					dis[m] = dis[j] + road_length[j][m];
+					path[m].clear();                     //保存并更新路径
+					path[m].insert(path[m].end(), path[j].begin(), path[j].end());
+					path[m].push_back(m + 1);
+				}
+			}
+		}
+	}
+	vector<int>::iterator ite;
+	for (int i = 0; i < cross_num; i++)
+	{
+		cout << "源点"<<number<<"到"<<i+1<<"的最短路径长度：" << dis[i]<<endl<<"Path：";
+	    for (ite = path[i].begin(); ite !=path[i].end();++ite) {
+		    if (ite == path[i].begin())
+			    cout << *ite;
+		    else
+			    cout << "->"<< *ite ;
+	}
+	    cout << endl;
+	}
+	
+	
+
+}
 
 
 
@@ -181,10 +240,10 @@ int main(int argc, char *argv[])
 	   map3d[road[j].end-1][road[j].start-1][3]=map3d[road[j].start-1][road[j].end-1][3];
 	  }
 	  else{
-	    map3d[road[j].end-1][road[j].start-1][0]=-1;
-	    map3d[road[j].end-1][road[j].start-1][1]=-1;
-	    map3d[road[j].end-1][road[j].start-1][2]=-1;
-	    map3d[road[j].end-1][road[j].start-1][3]=-1;
+	    map3d[road[j].end-1][road[j].start-1][0]=MAX;
+	    map3d[road[j].end-1][road[j].start-1][1]=MAX;
+	    map3d[road[j].end-1][road[j].start-1][2]=MAX;
+	    map3d[road[j].end-1][road[j].start-1][3]=MAX;
 	  }
 	}
 	
@@ -220,36 +279,7 @@ int main(int argc, char *argv[])
 	}
 	
 	
-	/***********************************************************************************/
-	
-	/*for (int i = 0; i < road_num; i++)
-	{
-	  for (int j = 0; j < road_num; j++)
-	  {
-	      a[i][j].resize(road_num);
-	  }//之后才能对三维数组设定大小，否则内存出错
-      }
-	for (int i = 0; i < road_num; i++)
-	{
-	  for (int j = 0; j < road_num; j++)
-	  {
-            for (int k = 0; k < 4; k++)
-            {
-                a[k][j][i] = map3d[i][j][k];
-            }
-	  }
-	}*/
 
-      /*for (int i = 1; i < 2; i++)
-      {
-        for (int j = 0; j < cross_num; j++)
-        {
-            for (int k = 0; k < cross_num; k++)
-            {
-               std::cout << a[k][j][i] << std::endl;
-            }
-        }
-    }*/
 	/*******************************Test Map3d*****************************************/
         /*for(int z=1;z<2;z++)
 	   for(int y=0;y<cross_num;y++)
@@ -269,21 +299,21 @@ int main(int argc, char *argv[])
 	/*******************************Test OK!*******************************************/
 	/**********************************************************************************/
 	// struct  CarState a[road.id][road.channel][road.length][road.flag_bothway];
-	//List<float> ls1;//creat list
-	//ls1.add(5,5000,10,5,3,2,1);
-	//ls1.resShow();
+	List<float> ls1;//creat list
+	ls1.add(5,5000,10,5,3,2,1);
+	ls1.resShow();
 	// TODO:process
 	
 
-	dist.push_back(0);
+/*	dist.push_back(0);
 	for(int i=1;i<cross_num;i++)
 	{
 	  dist.push_back(MAX);
 	}
-	visited.resize(cross_num, false);
+	visited.resize(cross_num, false);*/
 	Dijkstra(0,cross_num);
-	for(int i=0;i<cross_num;i++)
-	cout<<dist[i]<<endl;
+//	for(int i=0;i<cross_num;i++)
+//	cout<<dist[i]<<endl;
 	
 	// TODO:write output file
 	
