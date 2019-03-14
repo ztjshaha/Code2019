@@ -11,6 +11,8 @@ iostream
 -
 string
 ../class/string
+vector
+-
 
 ../class/cross.h
 iostream
@@ -25,6 +27,8 @@ string
 ../class/string
 road.h
 ../class/road.h
+vector
+../class/vector
 
 ../class/road.h
 iostream

@@ -2,6 +2,7 @@
 #define CAR_H_
 #include <iostream>
 #include "string"
+#include <vector>
 using namespace std;
 #define Car_Num    10000
 typedef struct Car_Situation
@@ -29,10 +30,10 @@ class Car{
     int speed_max;
     int start_time;  
     Car_Situation situation;
-    
+    vector<int> car_path;
     Car()
     {
-     situation.car_dirction=NULL;
+      situation.car_dirction=NULL;
       situation.car_position=NULL;
       situation.car_channel=NULL;
       situation.road_id=NULL;

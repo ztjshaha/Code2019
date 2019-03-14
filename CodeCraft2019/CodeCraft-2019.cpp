@@ -19,7 +19,7 @@
 using namespace std;
 //Linklist ls1;
 
-
+//update version
 
 
 Car 	car[Car_Num];
@@ -38,6 +38,7 @@ vector<vector<vector<int>>> path;
 //vector<int> path[cross_num][cross_num];
 //vector<int> dist;
 //vector<bool> visited;
+
 
 
 /*void Dijkstra(int number,int cross_num)
@@ -73,7 +74,6 @@ vector<vector<vector<int>>> path;
 	
 }
 */
-
 
 void Dijkstra(int cross_num)//,vector<int>& path[cross_num][cross_num])
 {
@@ -122,6 +122,7 @@ void Dijkstra(int cross_num)//,vector<int>& path[cross_num][cross_num])
 		}
     }
    }
+      
 	vector<int>::iterator ite;
 	int z;
 	for (int k = 0; k < cross_num; k++)
@@ -132,9 +133,8 @@ void Dijkstra(int cross_num)//,vector<int>& path[cross_num][cross_num])
 			for (ite = path[k][i].begin(); ite != path[k][i].end(); ++ite) {
 			  if (ite == path[k][i].begin())
 				{
-					cout << *ite;
-					//path_out[k][i].;
-				  
+				  cout << *ite;
+				  //path_out[k][i].;
 				}
 					else
 					{
@@ -143,9 +143,7 @@ void Dijkstra(int cross_num)//,vector<int>& path[cross_num][cross_num])
 					}
 					//cout<<path[k][i].size()<<endl;
 			}
-			
-			cout << endl;
-			
+			cout << endl;	
 		}
 	}
 
@@ -153,6 +151,43 @@ void Dijkstra(int cross_num)//,vector<int>& path[cross_num][cross_num])
 	
 
 }
+void Search_car_path(int car_num,int &car_start,int &car_end)
+  {
+  int num=0;
+  //for(int i=0;i<car_num;i++)
+  //{
+    vector<int>::iterator ite;
+    for (ite = path[car_start-1][car_end-1].begin(); ite != path[car_start-1][car_end-1].end(); ++ite) {
+			  if (ite == path[car_start-1][car_end-1].begin())
+				{
+				 // cout << *ite;
+				  //path_out[k][i].;
+				  car[car_num].car_path.push_back(*ite);
+				  cout <<car[car_num].car_path[num];
+				 // cout <<car[car_num].car_path.size();
+				  num++;
+				}
+				else
+				{
+					//cout << "->" << *ite;
+					//path_out[i][z]=*ite;
+					 car[car_num].car_path.push_back(*ite);
+					 cout <<"->"<<car[car_num].car_path[num];
+					num++;
+				}
+				
+				//cout <<car[car_num].car_path.size();
+					//cout<<path[k][i].size()<<endl;
+			}
+			cout<<endl;
+    //car[car_num].car_path[car_num]=path[car_end][car_start];
+    
+   // path[][]; 
+  
+    
+  //}
+
+  }
 /*
 void Search_Path(int start,int end)
 {
@@ -178,7 +213,7 @@ int main(int argc, char *argv[])
 {
 
      	
-    //linkptr[1]->Cur_Road.AddNode
+    //road[1]->Cur_Road.AddNode
 	std::cout << "Begin"<< std::endl;
 	if(argc < 5){
 		std::cout << "please input args: carPath, roadPath, crossPath, answerPath" << std::endl;
@@ -214,8 +249,8 @@ int main(int argc, char *argv[])
        }
 	road_file.close();
 	ifstream road_file_1(argv[2]);
-	Road linkptr[road_num];
-//	Road * linkptr[road_num];
+	Road road[road_num];
+//	Road * road[road_num];
 	
 //	Linklist car_list[road_num];
 //	Road road(car_list[0],1);
@@ -227,9 +262,9 @@ int main(int argc, char *argv[])
 	  
 	  Road road(car_list,i);
 	  
-	  linkptr[i] = & road;
+	  road[i] = & road;
 	  if(i>9)
-	    cout<<linkptr[i-10]->id<<"     "<<linkptr[i]->id<<endl;
+	    cout<<road[i-10]->id<<"     "<<road[i]->id<<endl;
 //	  road[i].Cur_Road = car_list[i];
 	}*/
 	int num=0;
@@ -242,13 +277,13 @@ int main(int argc, char *argv[])
         if(str_road[0]=='(')
          {
 	   
-	   sscanf(str_road,"(%d,%d,%d,%d,%d,%d,%d)", 	&(linkptr[num].id),
-							&(linkptr[num].length),
-							&(linkptr[num].limit_speed),
-							&(linkptr[num].channel),
-							&(linkptr[num].start),
-							&(linkptr[num].end),
-							&(linkptr[num].flag_bothway));
+	   sscanf(str_road,"(%d,%d,%d,%d,%d,%d,%d)", 	&(road[num].id),
+							&(road[num].length),
+							&(road[num].limit_speed),
+							&(road[num].channel),
+							&(road[num].start),
+							&(road[num].end),
+							&(road[num].flag_bothway));
 
 	
 	num++;
@@ -296,13 +331,13 @@ int main(int argc, char *argv[])
        int n=1;
        printf("Number %d  car_info: %d  %d  %d  %d  %d \n",l,car[l].id,car[l].start,car[l].end,car[l].speed_max,car[l].start_time);
        printf("Number %d  cross: %d  %d  %d  %d  %d \n",m,cross[m].cross_id,cross[m].road_id[0],cross[m].road_id[1],cross[m].road_id[2],cross[m].road_id[3]);
-       printf("Number %d  road: %d  %d  %d  %d  %d  %d  %d\n",n,(linkptr[n].id),
-	 					    (linkptr[n].length),
-						    (linkptr[n].limit_speed),
-						    (linkptr[n].channel),
-						    (linkptr[n].start),
-						    (linkptr[n].end),
-						    (linkptr[n].flag_bothway));
+       printf("Number %d  road: %d  %d  %d  %d  %d  %d  %d\n",n,(road[n].id),
+	 					    (road[n].length),
+						    (road[n].limit_speed),
+						    (road[n].channel),
+						    (road[n].start),
+						    (road[n].end),
+						    (road[n].flag_bothway));
        
        printf("road_num: %d  car_num: %d  cross_num: %d \n",road_num,car_num,cross_num);
        /******Test Input Datas finished******/
@@ -313,22 +348,22 @@ int main(int argc, char *argv[])
 	int map3d [road_num][road_num][4];
 	for(int j=0;j<road_num;j++)
 	{
-	 map3d[linkptr[j].start-1][linkptr[j].end-1][0]=linkptr[j].id;
-	 map3d[linkptr[j].start-1][linkptr[j].end-1][1]=linkptr[j].length;
-	 map3d[linkptr[j].start-1][linkptr[j].end-1][2]=linkptr[j].limit_speed;
-	 map3d[linkptr[j].start-1][linkptr[j].end-1][3]=linkptr[j].channel;
-	 if(linkptr[j].flag_bothway==1)
+	 map3d[road[j].start-1][road[j].end-1][0]=road[j].id;
+	 map3d[road[j].start-1][road[j].end-1][1]=road[j].length;
+	 map3d[road[j].start-1][road[j].end-1][2]=road[j].limit_speed;
+	 map3d[road[j].start-1][road[j].end-1][3]=road[j].channel;
+	 if(road[j].flag_bothway==1)
 	 {
-	   map3d[linkptr[j].end-1][linkptr[j].start-1][0]=map3d[linkptr[j].start-1][linkptr[j].end-1][0];
-	   map3d[linkptr[j].end-1][linkptr[j].start-1][1]=map3d[linkptr[j].start-1][linkptr[j].end-1][1];
-	   map3d[linkptr[j].end-1][linkptr[j].start-1][2]=map3d[linkptr[j].start-1][linkptr[j].end-1][2];
-	   map3d[linkptr[j].end-1][linkptr[j].start-1][3]=map3d[linkptr[j].start-1][linkptr[j].end-1][3];
+	   map3d[road[j].end-1][road[j].start-1][0]=map3d[road[j].start-1][road[j].end-1][0];
+	   map3d[road[j].end-1][road[j].start-1][1]=map3d[road[j].start-1][road[j].end-1][1];
+	   map3d[road[j].end-1][road[j].start-1][2]=map3d[road[j].start-1][road[j].end-1][2];
+	   map3d[road[j].end-1][road[j].start-1][3]=map3d[road[j].start-1][road[j].end-1][3];
 	  }
 	  else{
-	    map3d[linkptr[j].end-1][linkptr[j].start-1][0]=MAX;
-	    map3d[linkptr[j].end-1][linkptr[j].start-1][1]=MAX;
-	    map3d[linkptr[j].end-1][linkptr[j].start-1][2]=MAX;
-	    map3d[linkptr[j].end-1][linkptr[j].start-1][3]=MAX;
+	    map3d[road[j].end-1][road[j].start-1][0]=MAX;
+	    map3d[road[j].end-1][road[j].start-1][1]=MAX;
+	    map3d[road[j].end-1][road[j].start-1][2]=MAX;
+	    map3d[road[j].end-1][road[j].start-1][3]=MAX;
 	  }
 	}
 	
@@ -416,7 +451,22 @@ int main(int argc, char *argv[])
 	//Road Test(a);
 	// TODO:process
 	//Dijkstra Test
+	//D function
+	/********************************************/
 	Dijkstra(cross_num);
+	//input smallest_path
+	for(int i=0;i<car_num;i++)
+	{
+	//int i=5;
+	  Search_car_path(i,car[i].start,car[i].end);
+	  cout <<i<<endl;
+	}
+	//test out_smallest_path
+	for(int i=0;i<car[0].car_path.size();i++)
+	{
+	  cout<<car[0].car_path[i]<<" ";
+	}
+	/********************************************/
 	
 	//test of smallest_path
 	/*vector<int>::iterator ite;
