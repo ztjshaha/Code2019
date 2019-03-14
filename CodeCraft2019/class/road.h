@@ -31,9 +31,9 @@ class Road{
     int start;
     int end;
     int flag_bothway;
-    Linklist &Cur_Road;
-    Road(Linklist a);
-//    Road();
+    Linklist Cur_Road;
+//    Road(Linklist a,int b);
+    Road();
 };
 
 
@@ -63,8 +63,14 @@ class Road{
    
    
     // void stringTOnum1(string s,  int * pdata);
-Road::Road(Linklist a) :Cur_Road(a)
+/*Road::Road(Linklist a,int b) :Cur_Road(a)
 {
+  id = b;
 	//ptr = nullptr;
+}*/
+Road::Road()
+{
+  
 }
+
 #endif

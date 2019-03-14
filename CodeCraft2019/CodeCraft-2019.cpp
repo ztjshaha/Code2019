@@ -3,6 +3,7 @@
 #include <sys/time.h> 
 #include "fstream"
 #include <limits.h>
+#include <valarray>
 /*****************************************/
 /**********Add myself lib.h&class .h************/
 /*****************************************/
@@ -24,7 +25,7 @@ using namespace std;
 Car 	car[Car_Num];
 Cross   cross[Cross_Num];
 map map1;
-#define MAX 100//__INT_MAX__
+#define MAX 100000//__INT_MAX__
 //int data[7]={10,22,31,45,56,65,70};
 //int out_data[7];
 //struct  CarState a[1][1][1];
@@ -176,7 +177,7 @@ void Search_Path(int start,int end)
 int main(int argc, char *argv[])
 {
 
-
+     	
     //linkptr[1]->Cur_Road.AddNode
 	std::cout << "Begin"<< std::endl;
 	if(argc < 5){
@@ -211,34 +212,46 @@ int main(int argc, char *argv[])
 	 road_num++;
          }
        }
-       road_file.close();
-       //ifstream road_file(argv[2]);
-       	Road * linkptr[road_num];
+	road_file.close();
+	ifstream road_file_1(argv[2]);
+	Road linkptr[road_num];
+//	Road * linkptr[road_num];
+	
+//	Linklist car_list[road_num];
+//	Road road(car_list[0],1);
 //	Road 	road[Road_Num];
 //	Linklist  car_list[Road_Num];
-	for(int i=0;i<road_num;i++)
+	
+/*	for(int i=0;i<road_num;i++)
 	{
-	  Linklist car_list;
-	  Road road(car_list);
+	  
+	  Road road(car_list,i);
+	  
 	  linkptr[i] = & road;
+	  if(i>9)
+	    cout<<linkptr[i-10]->id<<"     "<<linkptr[i]->id<<endl;
 //	  road[i].Cur_Road = car_list[i];
-	}
-       	while(!road_file.eof())
+	}*/
+	int num=0;
+       	while(!road_file_1.eof())
 	{
 	char str_road[50];
-	road_file.getline(str_road,'\r\n');
+
+	road_file_1.getline(str_road,'\r\n');
 	if(str_road[0]=='#');
         if(str_road[0]=='(')
          {
 	   
-	   sscanf(str_road,"(%d,%d,%d,%d,%d,%d,%d)", 	&(linkptr[road_num]->id),
-							&(linkptr[road_num]->length),
-							&(linkptr[road_num]->limit_speed),
-							&(linkptr[road_num]->channel),
-							&(linkptr[road_num]->start),
-							&(linkptr[road_num]->end),
-							&(linkptr[road_num]->flag_bothway));
+	   sscanf(str_road,"(%d,%d,%d,%d,%d,%d,%d)", 	&(linkptr[num].id),
+							&(linkptr[num].length),
+							&(linkptr[num].limit_speed),
+							&(linkptr[num].channel),
+							&(linkptr[num].start),
+							&(linkptr[num].end),
+							&(linkptr[num].flag_bothway));
+
 	
+	num++;
          }
        }
        road_file.close();
@@ -280,16 +293,16 @@ int main(int argc, char *argv[])
        /******Test Input Datas******/
        int l=0;
        int m=0;
-       int n=0;
+       int n=1;
        printf("Number %d  car_info: %d  %d  %d  %d  %d \n",l,car[l].id,car[l].start,car[l].end,car[l].speed_max,car[l].start_time);
        printf("Number %d  cross: %d  %d  %d  %d  %d \n",m,cross[m].cross_id,cross[m].road_id[0],cross[m].road_id[1],cross[m].road_id[2],cross[m].road_id[3]);
-       printf("Number %d  road: %d  %d  %d  %d  %d  %d  %d\n",n,(linkptr[n]->id),
-	 					    (linkptr[n]->length),
-						    (linkptr[n]->limit_speed),
-						    (linkptr[n]->channel),
-						    (linkptr[n]->start),
-						    (linkptr[n]->end),
-						    (linkptr[n]->flag_bothway));
+       printf("Number %d  road: %d  %d  %d  %d  %d  %d  %d\n",n,(linkptr[n].id),
+	 					    (linkptr[n].length),
+						    (linkptr[n].limit_speed),
+						    (linkptr[n].channel),
+						    (linkptr[n].start),
+						    (linkptr[n].end),
+						    (linkptr[n].flag_bothway));
        
        printf("road_num: %d  car_num: %d  cross_num: %d \n",road_num,car_num,cross_num);
        /******Test Input Datas finished******/
@@ -300,22 +313,22 @@ int main(int argc, char *argv[])
 	int map3d [road_num][road_num][4];
 	for(int j=0;j<road_num;j++)
 	{
-	 map3d[linkptr[j]->start-1][linkptr[j]->end-1][0]=linkptr[j]->id;
-	 map3d[linkptr[j]->start-1][linkptr[j]->end-1][1]=linkptr[j]->length;
-	 map3d[linkptr[j]->start-1][linkptr[j]->end-1][2]=linkptr[j]->limit_speed;
-	 map3d[linkptr[j]->start-1][linkptr[j]->end-1][3]=linkptr[j]->channel;
-	 if(linkptr[j]->flag_bothway==1)
+	 map3d[linkptr[j].start-1][linkptr[j].end-1][0]=linkptr[j].id;
+	 map3d[linkptr[j].start-1][linkptr[j].end-1][1]=linkptr[j].length;
+	 map3d[linkptr[j].start-1][linkptr[j].end-1][2]=linkptr[j].limit_speed;
+	 map3d[linkptr[j].start-1][linkptr[j].end-1][3]=linkptr[j].channel;
+	 if(linkptr[j].flag_bothway==1)
 	 {
-	   map3d[linkptr[j]->end-1][linkptr[j]->start-1][0]=map3d[linkptr[j]->start-1][linkptr[j]->end-1][0];
-	   map3d[linkptr[j]->end-1][linkptr[j]->start-1][1]=map3d[linkptr[j]->start-1][linkptr[j]->end-1][1];
-	   map3d[linkptr[j]->end-1][linkptr[j]->start-1][2]=map3d[linkptr[j]->start-1][linkptr[j]->end-1][2];
-	   map3d[linkptr[j]->end-1][linkptr[j]->start-1][3]=map3d[linkptr[j]->start-1][linkptr[j]->end-1][3];
+	   map3d[linkptr[j].end-1][linkptr[j].start-1][0]=map3d[linkptr[j].start-1][linkptr[j].end-1][0];
+	   map3d[linkptr[j].end-1][linkptr[j].start-1][1]=map3d[linkptr[j].start-1][linkptr[j].end-1][1];
+	   map3d[linkptr[j].end-1][linkptr[j].start-1][2]=map3d[linkptr[j].start-1][linkptr[j].end-1][2];
+	   map3d[linkptr[j].end-1][linkptr[j].start-1][3]=map3d[linkptr[j].start-1][linkptr[j].end-1][3];
 	  }
 	  else{
-	    map3d[linkptr[j]->end-1][linkptr[j]->start-1][0]=0;
-	    map3d[linkptr[j]->end-1][linkptr[j]->start-1][1]=0;
-	    map3d[linkptr[j]->end-1][linkptr[j]->start-1][2]=0;
-	    map3d[linkptr[j]->end-1][linkptr[j]->start-1][3]=0;
+	    map3d[linkptr[j].end-1][linkptr[j].start-1][0]=MAX;
+	    map3d[linkptr[j].end-1][linkptr[j].start-1][1]=MAX;
+	    map3d[linkptr[j].end-1][linkptr[j].start-1][2]=MAX;
+	    map3d[linkptr[j].end-1][linkptr[j].start-1][3]=MAX;
 	  }
 	}
 	
@@ -323,7 +336,7 @@ int main(int argc, char *argv[])
 	/***************************creat map3d finished***********************************/
 	/**********************************************************************************/
 	/***************************creat vector road_length*******************************/
-	/*
+	
 	road_length.resize(cross_num);
 	//path_out.resize(cross_num);
 	for (int k = 0; k < cross_num; ++k){
@@ -358,7 +371,7 @@ int main(int argc, char *argv[])
                // a[k][j][i] = map3d[i][j][k];
 	  }
 	}
-	*/
+	
 	
 
 	/*******************************Test Map3d*****************************************/
@@ -367,7 +380,7 @@ int main(int argc, char *argv[])
 	      for(int x=0;x<cross_num;x++)
 	    {
 	      if((x!=y)&&(map3d[x][y][z]==0))
-		map3d[x][y][z]=0;
+		map3d[x][y][z]=MAX;
 	       cout << map3d[x][y][z]<<' ';
 	       if(x==(cross_num-1))
 		 cout<<endl;
@@ -403,7 +416,7 @@ int main(int argc, char *argv[])
 	//Road Test(a);
 	// TODO:process
 	//Dijkstra Test
-	//Dijkstra(cross_num);
+	Dijkstra(cross_num);
 	
 	//test of smallest_path
 	/*vector<int>::iterator ite;

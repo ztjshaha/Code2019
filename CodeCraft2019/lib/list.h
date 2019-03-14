@@ -9,6 +9,7 @@ using namespace std;
 class Linklist {
 public:
 	Linklist();
+	int i;
 	void AddNode(int data[7]);        //尾插入法创建链表
 	int Delete(int i);             //删除表中元素
 	int GetData(int i,int data[7]);            //取得表中元素值

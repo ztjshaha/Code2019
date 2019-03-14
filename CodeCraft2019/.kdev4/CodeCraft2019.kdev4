@@ -24,13 +24,21 @@ Name=CodeCraft-2019
 Type=Native Application
 
 [Launch][Launch Configuration 0][Data]
-Arguments=
+Arguments=../../../config/car.txt ../../../config/road.txt ../../../config/cross.txt
+Debugger Shell=
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x1a\x00C\x00o\x00d\x00e\x00C\x00r\x00a\x00f\x00t\x002\x000\x001\x009\x00\x00\x00\x1c\x00C\x00o\x00d\x00e\x00C\x00r\x00a\x00f\x00t\x00-\x002\x000\x001\x009)
 Dependency Action=Build
+Display Demangle Names=true
+Display Static Members=false
 EnvironmentGroup=default
-Executable=file:///home/zt/work/Code2019/CodeCraft2019/
+Executable=file:///home/zt/work/Code2019/CodeCraft2019/build/bin/CodeCraft-2019
 External Terminal=konsole --noclose --workdir %workdir -e %exe
+GDB Path=
 Project Target=CodeCraft2019,CodeCraft-2019
+Remote GDB Config Script=
+Remote GDB Run Script=
+Remote GDB Shell Script=
+Start With=GdbConsole
 Use External Terminal=false
 Working Directory=
-isExecutable=false
+isExecutable=true
