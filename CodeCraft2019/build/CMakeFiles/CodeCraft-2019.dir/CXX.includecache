@@ -33,6 +33,14 @@ string
 ../class/string
 vector
 ../class/vector
+../lib/list.h
+../lib/list.h
+
+../lib/list.h
+iostream
+-
+node.h
+../lib/node.h
 
 /home/zt/work/Code2019/CodeCraft2019/CodeCraft-2019.cpp
 iostream
@@ -61,10 +69,10 @@ map.h
 /home/zt/work/Code2019/CodeCraft2019/lib/lib.h
 
 /home/zt/work/Code2019/CodeCraft2019/lib/list.h
-node.h
-/home/zt/work/Code2019/CodeCraft2019/lib/node.h
 iostream
 -
+node.h
+/home/zt/work/Code2019/CodeCraft2019/lib/node.h
 
 /home/zt/work/Code2019/CodeCraft2019/lib/node.h
 vector

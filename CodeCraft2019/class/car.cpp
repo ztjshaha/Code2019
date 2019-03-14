@@ -1,30 +1,20 @@
 #include "car.h"
 #include "math.h"
-void Car::distance(int id,int Cross_num)
+/*void Car::Car_status(Car_Situation situation)
 {
-  int Dis,a;
-  int flag_updown;
-  int Road_Side;
-  
-  Dis=end-start;
-  
-  Road_Side=sqrt(Cross_num);
-  
-  if(Dis<0)
-  {
-    flag_updown=-1;
-    cout<<"move up"<<endl;
-  }
-  else 
-   {
-      flag_updown=1;  
-      cout<<"move down"<<endl;
-   }
-  if(Dis%Road_Side==0)
-  {
-    a=Dis/Road_Side;
-  }
-  else{
     
-  }
-}
+    // int flag;
+    //int car_dirction;
+    int Road_Id;
+    int Next_Cross;
+    int Channel;
+    //int car_id;
+    //int	car_position;
+    int Car_Speed;
+    bool Token;  //第一优先级车辆标志，是则为1，不是则为0
+    vector <string> car_passed;
+    vector <string> car_pass;
+    int car_turn;	//D 	:	1
+			//L	:	0
+			//R	:	-1
+}*/

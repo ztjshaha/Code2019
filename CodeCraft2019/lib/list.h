@@ -1,250 +1,140 @@
-#ifndef LINK_H
-#define LINK_H
-#include "node.h"
+#ifndef LIST_H
+#define LIST_H
 #include <iostream>
-template <class T>
-class List
-{
+#include "node.h"
+using namespace std;
+
+
+
+class Linklist {
 public:
-    List();//默认构造函数
-    List(const List& ln);//拷贝构造函数
-    ~List();//析构函数
-    void add(T flag,T dirction,T id,T position,T speed,T passed,T pass);
-    void ascSort();//升序排序
-    void remove(T index);//移除某个结点
-    T find(int index);//查找结点
-    bool isEmpty();//判断是否为空
-    int size();//链表长度
-    void show();//显示链表
-    void resShow();//链表反向显示
-    void removeAll();//删除全部结点
-private:
-    Node<T> *head;
-    Node<T> *tail;
-    int length;
+	Linklist();
+	void AddNode(int data[7]);        //尾插入法创建链表
+	int Delete(int i);             //删除表中元素
+	int GetData(int i,int data[7]);            //取得表中元素值
+	int Search(int obj);           //在表中寻找匹配项
+	int ListLength();              //获得表的长度
+	void Display();                //遍历整个链表
+	Node * Head;
 };
- 
-//////////////////////////////////////////////////////////////////////////////////
-//默认构造函数
-template <typename T>
-List<T>::List()
-{
-    head = new Node<T>;
-    tail = new Node<T>;
-    head->next = tail;
-    head->prev = nullptr;
-    tail->next = nullptr;
-    tail->prev = head;
-    length = 0;
+
+Linklist::Linklist() 
+{                   //构造函数
+	Head = new Node;
+	Head->next = nullptr;
 }
-//拷贝构造函数
-template <typename T>
-List<T>::List(const List &ln)
-{
-    head = new Node<T>;
-    head->prev = nullptr;
-    tail = new Node<T>;
-    head->next = tail;
-    tail->prev = head;
-    length = 0;
-    Node<T>* temp = ln.head;
-    while(temp->next != ln.tail)
-    {
-        temp = temp->next;
-        tail->data = temp->data;
-        Node<T> *p = new Node<T>;
-        p->prev = tail;
-        tail->next = p;
-        tail = p;
-        length++;
-    }
-    tail->next = nullptr;
+
+void Linklist::AddNode(int data[7]) 
+{      //尾插入法创建链表
+	Node *p;
+	Node *temp;
+	p = Head;
+	temp = new Node;
+	temp->flag=data[0];
+	temp->car_dirction=data[1];
+	temp->car_id=data[2];
+	temp->car_position=data[3];
+	temp->car_speed=data[4];
+	temp->car_passed=data[5];
+	temp->car_pass=data[6];
+	p->next = temp;
+	p = temp;
+	p->next = nullptr;
 }
-//向链表添加数据
-template <typename T>
-void List<T>::add(T flag,T dirction,T id,T position,T speed,T passed,T pass)
-{
-    Node<T>* temp = this->tail;
-    tail->flag = flag;
-    tail->car_dirction = dirction;
-    tail->car_id = id;
-    tail->car_position = position;
-    tail->car_speed = speed;
-    tail->car_passed = passed;
-    tail->car_pass = pass;
-    
-    tail->next = new Node<T>;
-    Node<T> *p = tail;
-    tail = tail->next;
-    tail->prev = p;
-    tail->next = nullptr;
-    length++;
+
+int Linklist::Delete(int i) {          //删除i处的数据
+	Node *temp;
+	temp = Head;
+	int j = 0;
+	while (temp&&j < i - 1) {
+		temp = temp->next;
+		j++;
+	}
+	if (!temp || j > i - 1) {
+		cout << "删除位置错误";
+		return -1;
+	}
+	else {
+		Node *s;
+		s = temp->next;
+		temp->next = s->next;
+		delete s;
+	}
 }
-//查找结点
-template <typename T>
-T List<T>::find(int index)
-{
-    if(length == 0)
-    {
-        std::cout << "List is empty";
-        return NULL;
-    }
-    if(index >= length)
-    {
-        std::cout << "Out of bounds";
-        return NULL;
-    }
-    int x = 0;
-    T data;
-    Node<T> *p;
-    if(x < length/2)
-    {
-        p = head->next;
-        while (p->next != nullptr && x++ != index)
-        {
-            p=p->next;
-        }
-    } else{
-        p = tail->prev;
-        while(p->prev != nullptr && x++ != index)
-        {
-            p = p->prev;
-        }
-    }
-    return p->data;
+
+int Linklist::GetData(int i,int data[7]){         //得到i处的元素
+	Node *temp;
+	temp = Head;
+	int j = 0;
+	//int data[7];
+	while (temp&&j < i - 1) {
+		temp = temp->next;
+		j++;
+	}
+	if (!temp || j > i - 1) {
+		cout << "寻找位置错误\n";
+		return -1;
+	}
+	else {
+		cout << i << "处的数据为：" << "flag:"<<temp->flag << "\n"
+					  << "car_dirction:"<<temp->car_dirction << "\n"
+					  << "car_id:"<<temp->car_id << "\n"
+					  << "car_position:"<<temp->car_position << "\n"
+					  << "car_speed:"<<temp->car_speed << "\n"
+					  << "car_passed:"<<temp->car_passed << "\n"
+					  << "car_pass:"<<temp->car_pass << "\n";
+					  data[0]=temp->flag;
+					  data[1]=temp->car_dirction;
+					  data[2]=temp->car_id;
+					  data[3]=temp->car_position;
+					  data[4]=temp->car_speed;
+					  data[5]=temp->car_passed;
+					  data[6]=temp->car_pass;
+		return 0;
+	}
 }
-//删除结点
-template <typename T>
-void List<T>::remove(T index)
-{
-    if(length == 0)
-    {
-        std::cout << "List is empty";
-        return ;
-    }
-    Node<T> *p = head;
-    while(p->next!=nullptr)
-    {
-        p = p->next;
-        if(p->data == index)
-        {
-            Node<T> *temp = p->prev;
-            temp->next = p->next;
-            p->next->prev = temp;
-            delete p;
-            length--;
-            return ;
-        }
-    }
+
+int Linklist::Search(int obj) {       //寻找链表中有无与obj匹配的元素
+	int j = 1;
+	Node *temp;
+	temp = Head->next;
+	while (temp && temp->next->car_id != obj) {
+		temp = temp->next;
+		j++;
+	}
+	if (temp == NULL) {
+		cout << "该链表中无此car" << "\n";
+		return 0;
+	}
+	else {
+		cout << "在该链表中的第" << j << "car等于" << obj << "\n";
+		return j;
+	}
+	//temp->next= NULL;
 }
-//删除所有结点
-template <typename T>
-void List<T>::removeAll()
-{
-    if(length == 0)
-    {
-        return ;
-    }
-    Node<T> *p = head->next;
-    while(p != tail)
-    {
-        Node<T>* temp = p;
-        p = p->next;
-        delete temp;
-    }
-    head->next = tail;
-    tail->prev = head;
-    length = 0;
+
+int Linklist::ListLength() {                //计算链表长度
+	Node *temp;
+	temp = Head;
+	int j = 0;
+	while (temp) {
+		temp = temp->next;
+		j++;
+	}
+	cout << "该链表的长度为：" << j - 1 << "\n";
+	return j;
 }
-//升序排序
-template <typename T>
-void List<T>::ascSort()
-{
-    if(length <= 1) return;
-    Node<T> *p = head->next;
-    for (int i = 0; i < length-1; i++)
-    {
-        Node<T> *q = p->next;
-        for (int j = i+1; j < length; j++)
-        {
-            if(p->data > q->data)
-            {
-                T temp = q->data;
-                q->data = p->data;
-                p->data = temp;
-            }
-            q=q->next;
-        }
-        p = p->next;
-    }
+
+void Linklist::Display(){
+	Node *temp;
+	temp = Head->next;
+	int e;
+	cout << "该链表的遍历依次为：";
+	while (temp) {
+		//e = temp->data;
+		cout << temp->flag << " "<<temp->car_dirction<< " "<<temp->car_id<< " "<<temp->car_position<< " "<<temp->car_speed<< " "<<temp->car_passed<< " "<<temp->car_pass<<endl;
+		temp = temp->next;
+	}
+	cout << "\n";
 }
-//判断是否为空
-template <typename T>
-bool List<T>::isEmpty()
-{
-    if(length == 0)
-    {
-        return true;
-    } else {
-        return false;
-    }
-}
-//链表长度
-template <typename T>
-int List<T>::size()
-{
-    return length;
-}
-//输出链表
-template <typename T>
-void List<T>::show()
-{
-    if(length == 0)
-    {
-        std::cout << "List is empty" << std::endl;
-        return;
-    }
-    Node<T> *p = head->next;
-    while (p != tail)
-    {
-        std::cout <<p->flag<<" "<<p->car_dirction<<" "<<p->car_id <<" "<<p->car_position<<" "<<p->car_speed <<" "<<p->car_passed <<" " <<p->car_pass <<endl;
-        p = p->next;
-    }
-    std::cout << std::endl;
-}
-//反向输出链表
-template <typename T>
-void List<T>::resShow()
-{
-    if(length == 0)return;
-    Node<T> *p = tail->prev;
-    while (p != head)
-    {
-        std::cout <<p->flag<<" "<<p->car_dirction<<" "<<p->car_id <<" "<<p->car_position<<" "<<p->car_speed <<" "<<p->car_passed <<" " <<p->car_pass <<endl;
-        p = p->prev;
-    }
-    std::cout << std::endl;
-}
-//析构函数
-template <typename T>
-List<T>::~List()
-{
-    if(length == 0)
-    {
-        delete head;
-        delete tail;
-        head = nullptr;
-        tail = nullptr;
-        return;
-    }
-    while(head->next != nullptr)
-    {
-        Node<T> *temp = head;
-        head = head->next;
-        delete temp;
-    }
-    delete head;
-    head = nullptr;
-}
- 
-#endif //TEST1_LINK_H
+#endif

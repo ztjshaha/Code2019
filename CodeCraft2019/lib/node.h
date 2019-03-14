@@ -12,7 +12,7 @@ public:
     vector <int> car_passed;
     vector <int> car_pass;
 };*/
-
+/*
 template <class T>
 class Node
 {
@@ -26,7 +26,17 @@ public:
     T 	car_speed;
     T 	car_passed;
     T 	car_pass;
+};*/ 
+struct Node {
+	//int data = 100;
+	int flag;
+	int car_dirction;
+	int car_id;
+	int car_position;
+	int car_speed;
+	int car_passed;
+	int car_pass;
+	Node *next;
 };
- 
  
 #endif //TEST1_NODE_H
