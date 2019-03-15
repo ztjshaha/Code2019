@@ -7,7 +7,7 @@ using namespace std;
 #define Car_Num    10000
 typedef struct Car_Situation
 {  
-   // int flag;
+    int flag;		//-1 unrun 0 run 1 finished
     int car_dirction;
     //int car_id;
     int	car_position;
@@ -20,6 +20,8 @@ typedef struct Car_Situation
     int car_turn;	//D 	:	1
 			//L	:	0
 			//R	:	-1
+    int is_moved;	//0 move 
+			//1 no move
 };
 //你的代码写在这里
 class Car{
@@ -33,6 +35,7 @@ class Car{
     vector<int> car_path;
     Car()
     {
+      situation.flag=NULL;
       situation.car_dirction=NULL;
       situation.car_position=NULL;
       situation.car_channel=NULL;

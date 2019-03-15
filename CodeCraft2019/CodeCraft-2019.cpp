@@ -24,6 +24,7 @@ using namespace std;
 
 Car 	car[Car_Num];
 Cross   cross[Cross_Num];
+vector<Road> road;
 map map1;
 #define MAX 100000//__INT_MAX__
 //int data[7]={10,22,31,45,56,65,70};
@@ -249,9 +250,7 @@ int main(int argc, char *argv[])
        }
 	road_file.close();
 	ifstream road_file_1(argv[2]);
-	Road road[road_num];
-//	Road * road[road_num];
-	
+	road.resize(road_num);
 //	Linklist car_list[road_num];
 //	Road road(car_list[0],1);
 //	Road 	road[Road_Num];
