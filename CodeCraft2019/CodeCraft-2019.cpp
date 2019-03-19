@@ -20,11 +20,13 @@ using namespace std;
 //Linklist ls1;
 
 //update version
-
-
-Car 	car[Car_Num];
-Cross   cross[Cross_Num];
+//vector<Car> car;
 vector<Road> road;
+Car car[Car_Num];
+Cross cross[Cross_Num];
+//Car 	car[Car_Num];
+//vector<Cross>   cross;
+
 map map1;
 #define MAX 100000//__INT_MAX__
 //int data[7]={10,22,31,45,56,65,70};
@@ -35,6 +37,7 @@ extern int road_num,car_num,cross_num;
 
 vector<vector<int>> road_length;
 vector<vector<vector<int>>> path;
+int sys_clk=1;
 //vector<int>::iterator smallest_path;
 //vector<int> path[cross_num][cross_num];
 //vector<int> dist;
@@ -75,6 +78,218 @@ vector<vector<vector<int>>> path;
 	
 }
 */
+
+//通过路的id查找哪条路
+int road_in_to_i(int roadid,int road_num)
+{
+  for(int i=0;i<road_num;i++)   //road_num:道路数量     
+  {
+    if(road[i].id==roadid)
+      return i;
+  }
+  return -1;
+}
+
+//行驶速度
+int velocity(int car_i,int road_i)
+{
+  return 
+        (car[car_i].speed_max>road[road_i].limit_speed)?
+                                            road[road_i].limit_speed : car[car_i].speed_max;
+}
+
+
+//车只在一条路上(无阻挡)  //到不了路口  (可以直接到)
+void update_car_in_road(int car_i,int road_num)
+{  
+     //////////////////////////////车状态变化///////////////////////////////////
+  //到不了路口
+  car[car_i].situation.car_position=
+                         car[car_i].situation.car_position + car[car_i].situation.car_speed; //位置变化
+                                                                                                                                                             //车在路上的优先级变化?????
+                                                                                                                                    
+   car[car_i].situation.is_moved=1;                                                      //是否移动标志:置1
+   
+//    int roadi = road_in_to_i ( car[car_i].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
+    
+ //  car[car_i].situation.token                      //状态变化        //是否在最前面（还需要判断） ?????
+ 
+ //////////////////////////////路状态变化///////////////////////////////////
+// int roadi = road_in_to_i ( car[car_i].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
+ //road[roadi].Cur_Road.AddNode();
+ 
+}
+
+//车只在一条路上(无阻挡)   //可以到路口
+void update_car_in_cross(int car_i,int road_num)
+{
+       //////////////////////////////车状态变化///////////////////////////////////
+   //可以到路口甚至下一段路 
+  int roadi = road_in_to_i ( car[car_i].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
+  car[car_i].situation.car_position=
+                         road[roadi].length; //位置变化(到路口)  
+  car[car_i].situation.is_moved = 1;                                                      //是否移动标志:置1
+  car[car_i].situation.token = 1;                      //状态变化
+  
+   //////////////////////////////路状态变化///////////////////////////////////
+   
+   
+   
+}
+
+
+//车到另一条路上(无阻挡)
+void update_car_to(int car_i,int road_i,int road_num)
+{
+       //////////////////////////////车状态变化///////////////////////////////////
+  int roadi = road_in_to_i ( car[car_i].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
+  car[car_i].situation.car_speed = velocity( car_i , road_i );//下一段速度
+  int s = road[roadi].length - car[car_i].situation.car_position;// 这条路还剩的路程
+  
+  car[car_i].situation.car_position = car[car_i].situation.car_speed - s;//下一段路的位置
+  car[car_i].situation.road_id = road[road_i].id;//改变车所在的路的id
+  
+  car[car_i].situation.car_channel=1;//车道(还需要判断)???????
+  
+  //  car[car_i].situation.token                      //状态变化        //是否在最前面（还需要判断） ?????
+  
+  car[car_i].situation.car_passed.push_back( car[car_i].situation.car_pass.front() );
+  car[car_i].situation.car_pass.pop_front();
+  
+  car[car_i].situation.car_dirction=car[car_i].situation.car_pass.front() ;           //方向?????
+  
+  car[car_i].situation.is_moved=1;     //是否移动标志:置1
+  
+
+   //////////////////////////////路状态变化///////////////////////////////////
+    
+}
+
+//路状态变化比较简单
+//路状态变化（车在路里面移动） 车-->路  ?????方向如何考虑
+void update_road_inside(int car_i,int road_num)
+{
+  int roadi = road_in_to_i ( car[car_i].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
+  Node * link_i = road[roadi].Cur_Road.Search( car[car_i].id ); //这部车在链表哪个位置
+  
+  //跟移动车辆改变的参数一样
+  link_i->car_position= car[car_i].situation.car_position; //位置变化
+  link_i->is_moved=1;                                                      //是否移动标志:置1
+  //link_i->car_dirction                  ///方向
+ //  car[car_i].situation.token                      //状态变化        //是否在最前面（还需要判断） ?????
+}
+
+
+//路状态变化（有车进入车道） 车-->路  ?????方向如何考虑
+void update_road_in(int roadi,int car_i)
+{
+ //把车的信息直接加到链表中(车的信息)
+  //road[roadi].Cur_Road.AddNode();
+ 
+}
+
+//路状态变化（有车出车道） 车-->路   ?????方向如何考虑
+void update_road_out(int roadi,int car_i)
+{
+  int link_i = road[roadi].Cur_Road.Search_i( car[car_i].id ); //这部车在链表哪个位置
+ //把车的信息直接在链表中删除
+  road[roadi].Cur_Road.Delete(link_i);
+ 
+}
+
+//查询道路状态（是否有车）?????方向如何考虑
+//?????
+Node * lookfor_road(int roadi)
+{
+  int car_in_road = road[roadi].Cur_Road.ListLength();
+  //cout<<car_in_road;//car_in_road 
+  if((car_in_road-1)==0)
+  {
+    cout<<"no car"<<endl;
+    return NULL;
+  }
+  else
+  {
+    
+    return road[roadi].Cur_Road.Head;//返回链表头
+  }
+}
+
+//查询道路状态（最后面的车在哪里）?????方向如何考虑
+int first_channel(Node * car_link ,int dirction , int channel)//, int &short_position , int &first
+{
+  Node *temp; 
+  int flag=0;
+  if(car_link==NULL)
+  {
+    return 0;
+  }else
+  {
+ for(int i=0;i<channel;i++)
+ {
+   flag=0;
+   temp = car_link->next; 
+   while(temp)
+   {
+     if(temp->car_position==1 && temp->car_channel==i && temp->car_dirction==dirction)
+     {
+       flag=0;
+       break;
+     }
+     temp = temp->next;
+     flag=1;
+   }
+   if(flag)
+     return i;
+ }
+ return -1;
+  }
+}
+
+//在一段路上行驶
+int car_passdistence(int channel,int car_num,Node * car_link)
+{
+  Node *temp;
+    int vmax=car[car_num].situation.car_speed;
+  int thiscar_s=car[car_num].situation.car_position;
+  if(car_link==NULL)
+  {
+    return vmax;
+  }
+  temp=car_link->next;
+  int cari;
+  int car_s=0;      //此通道上最近车辆的距离
+//  temp=temp->next;
+  while(temp)
+  {
+    if((car_s==0||temp->car_position<car_s)&&temp->car_channel==channel)
+    {
+      car_s=temp->car_position;
+      cari=temp->is_moved;
+    }
+    temp=temp->next;
+  }
+
+  if(vmax < (car_s - thiscar_s))
+    return vmax;
+  else if(vmax >= (car_s - thiscar_s))
+  {
+    if(cari)
+      return car_s - thiscar_s - 1;
+    else
+      return -1;
+  }
+}
+
+//前方是否有车  ?????方向如何考虑
+void is_car()
+{
+  
+}
+
+//判断前方是否有阻挡
+//void resist()
+//{}
 
 void Dijkstra(int cross_num)//,vector<int>& path[cross_num][cross_num])
 {
@@ -148,68 +363,38 @@ void Dijkstra(int cross_num)//,vector<int>& path[cross_num][cross_num])
 		}
 	}
 
-	
-	
-
 }
+
+
+void carport()
+{
+  
+}
+
+
+
 void Search_car_path(int car_num,int &car_start,int &car_end)
   {
-  int num=0;
-  //for(int i=0;i<car_num;i++)
-  //{
+    int num=0;
     vector<int>::iterator ite;
     for (ite = path[car_start-1][car_end-1].begin(); ite != path[car_start-1][car_end-1].end(); ++ite) {
 			  if (ite == path[car_start-1][car_end-1].begin())
 				{
-				 // cout << *ite;
-				  //path_out[k][i].;
 				  car[car_num].car_path.push_back(*ite);
 				  cout <<car[car_num].car_path[num];
-				 // cout <<car[car_num].car_path.size();
 				  num++;
 				}
 				else
 				{
-					//cout << "->" << *ite;
-					//path_out[i][z]=*ite;
 					 car[car_num].car_path.push_back(*ite);
 					 cout <<"->"<<car[car_num].car_path[num];
 					num++;
 				}
-				
-				//cout <<car[car_num].car_path.size();
-					//cout<<path[k][i].size()<<endl;
+
 			}
 			cout<<endl;
-    //car[car_num].car_path[car_num]=path[car_end][car_start];
-    
-   // path[][]; 
-  
-    
-  //}
-
   }
-/*
-void Search_Path(int start,int end)
-{
-  vector<int>::iterator ite;
-  int z=path[start][end].size();
-  int path[z];
-  for (ite = path[start][end].begin(); ite != path[start][end].end(); ++ite) {
-			  if (ite == path[start][end].begin())
-				{
-					cout << *ite;
-					//path_out[k][i].;
-				  
-				}
-					else
-					{
-					cout << "->" << *ite;
-					//path_out[i][z]=*ite;
-					}
-			}
-}
-*/
+
 int main(int argc, char *argv[])
 {
 
@@ -230,8 +415,30 @@ int main(int argc, char *argv[])
 	std::cout << "carPath is :" << car_file << std::endl;
 	std::cout << "roadPath is :" << road_file << std::endl;
 	std::cout << "crossPath is :" << cross_file << std::endl;
-	
 	// TODO:read input filebuf
+	/*
+	std::string s;
+	int road_num=0,car_num=0,cross_num=0;
+	std::cout<<"read start"<<std::endl;
+	while(!road_file.eof())
+	{
+	char str_road[50];
+	road_file.getline(str_road,'\r\n');
+	if(str_road[0]=='#');
+        if(str_road[0]=='(')
+         {sscanf(str_road,"(%d,%d,%d,%d,%d,%d,%d)", 	&(road[road_num].id),
+							&(road[road_num].length),
+							&(road[road_num].limit_speed),
+							&(road[road_num].channel),
+							&(road[road_num].start),
+							&(road[road_num].end),
+							&(road[road_num].flag_bothway));
+	 road_num++;
+         }
+       }
+	road_file.close();
+	//ifstream road_file_1(argv[2]);
+	road.resize(road_num);*/
 	std::string s;
 	
 	
@@ -251,21 +458,6 @@ int main(int argc, char *argv[])
 	road_file.close();
 	ifstream road_file_1(argv[2]);
 	road.resize(road_num);
-//	Linklist car_list[road_num];
-//	Road road(car_list[0],1);
-//	Road 	road[Road_Num];
-//	Linklist  car_list[Road_Num];
-	
-/*	for(int i=0;i<road_num;i++)
-	{
-	  
-	  Road road(car_list,i);
-	  
-	  road[i] = & road;
-	  if(i>9)
-	    cout<<road[i-10]->id<<"     "<<road[i]->id<<endl;
-//	  road[i].Cur_Road = car_list[i];
-	}*/
 	int num=0;
        	while(!road_file_1.eof())
 	{
@@ -289,6 +481,7 @@ int main(int argc, char *argv[])
          }
        }
        road_file.close();
+
 	while(!car_file.eof())
 	{
 	char str_car[50];
@@ -305,6 +498,7 @@ int main(int argc, char *argv[])
          }
        } //car[1].situation.car_dirction
        car_file.close();
+       //car.resize(car_num);
     while(!cross_file.eof())
       {
        char str_cross[50];
@@ -322,6 +516,7 @@ int main(int argc, char *argv[])
          }
        }
        cross_file.close();
+      // cross.resize(cross_num);
        cout<<"All files input finished"<<endl;
        
        /******Test Input Datas******/
@@ -438,9 +633,10 @@ int main(int argc, char *argv[])
 	int a1, a2, a3;
 	a1 = cross_num; a2 = cross_num; a3 = cross_num;
 	path.resize(a1);//定义数组长(第1位)
+	vector<int>::iterator ite;
 	for (int i = 0; i < a1; i++)
 	{
-		path[i].resize(a2);//定义数组宽(第2位)
+	  path[i].resize(a2);//定义数组宽(第2位)
 		//for (int j = 0; j<a2; j++)
 			//path[i][j].resize(a3);//定义数组高(第3位)
 	}
@@ -466,6 +662,110 @@ int main(int argc, char *argv[])
 	  cout<<car[0].car_path[i]<<" ";
 	}
 	/********************************************/
+	vector<vector<int>> car_samestartid(cross_num);
+	/*car_samestartid.resize(cross_num);
+	//path_out.resize(cross_num);
+	for (int k = 0; k < cross_num; ++k){
+            car_samestartid[k].resize(cross_num);//每行为c列
+	    //path_out[k].resize(cross_num);
+        }
+        */
+	/******************************************************/
+	/*****************cross all car*************************/
+	/******************************************************/
+	  for(int j=0;j<cross_num;j++)
+	  {
+	    cout<<"cross_num:"<<(j+1)<<endl;
+	    for(int i=0;i<car_num;i++)
+	      {
+		if(j==(car[i].start-1)) //all cars start cross_num
+		  {
+		    car_samestartid[j].push_back(i);
+		    cout<<"car_id:"<<car_samestartid[j].back()<<" ";
+		  }
+	
+	      }
+	      cout <<endl;
+	  }
+	/******************************************************/   
+	/********************车库调度********************/
+	/******************************************************/
+	vector<int>::iterator ite_time;
+	vector<int> next_roadid;
+	int first_time=0;
+	int car_cross_num=0;
+	vector<int> road_channel;
+	
+	//car_cross_num=car_samestartid[1].size();
+	for(int k=0;k<cross_num;k++){
+	   cout<<endl<<"路口数:"<<k<<endl;
+	    for(ite_time = car_samestartid[k].begin(); ite_time !=car_samestartid[k].end(); ++ite_time){// 遍历所有路口的所有车辆  并根据相应逻辑进行车辆初始化
+ 		//将所有的车在初始化时sys_clk=1 时准备时刻,进行所有仓库的车标记为SET_OUT=1
+	      if (ite_time == car_samestartid[k].begin())//每个节点的第一辆车初始化
+		{	
+		      if(car[*ite_time].start_time==sys_clk)
+		      {
+			car[*ite_time].situation.flag=2;//等待出发
+			cout<<"car_id:"<<*ite_time<<"flag:"<<car[*ite_time].situation.flag<<"  ";
+			cout<<endl;
+			cout<<map3d[k][car[*ite_time].car_path[1]-1][0]<<endl;
+			int road_s;//道路编号转换
+			road_s=road_in_to_i(map3d[k][car[*ite_time].car_path[1]-1][0],road_num);
+			//cout<<road_s;
+			//查找车道是否有车
+			cout<<car[*ite_time].car_path[1]<<map3d[k][car[*ite_time].car_path[1]-1][3]<<endl;
+			int aa=first_channel(lookfor_road(road_s),car[*ite_time].car_path[1],map3d[k][car[*ite_time].car_path[1]-1][3]);			
+		        cout<<aa<<endl;
+			int Car_S=car_passdistence(aa,*ite_time,lookfor_road(road_s));
+			cout<<Car_S<<endl;
+			
+		      }
+			else
+			  {
+			    car[*ite_time].situation.flag=0;
+			    cout<<"car_id:"<<*ite_time<<"flag"<<car[*ite_time].situation.flag<<"  ";
+			
+			  }
+		      
+		 }
+			      else
+				{
+				  /*if(car[*ite_time].start_time==sys_clk)
+				    {
+				      car[*ite_time].situation.flag=2;
+				      cout<<"car_id:"<<*ite_time<<"flag: "<<car[*ite_time].situation.flag<<"  ";
+				    } else
+				      {
+					car[*ite_time].situation.flag=0;
+					cout<<"car_id:"<<*ite_time<<"set_out"<<car[*ite_time].situation.flag<<"  ";
+			
+				      }	*/		
+		
+		cout << endl;
+				}
+	  
+	    }
+	    /*
+	    cout<<"set_out标记结束"<<endl;
+	    cout<<"寻找路口车辆的下一个节点"<<endl;
+	   // ite_time.clear();
+	    for(ite_time = car_samestartid[k].begin(); ite_time !=car_samestartid[k].end(); ++ite_time){
+	      next_roadid.push_back(car[*ite_time].car_path[1]);
+	      cout <<"next_roadid: "<<next_roadid.back()<<"  ";
+	      road_channel.push_back(map3d[k][car[*ite_time].car_path[1]-1][3]);
+	      cout <<"road_channel: "<<road_channel.back()<<"  ";
+	      cout <<"car_speed: "<<car[*ite_time].speed_max<<"  ";
+	      //car_cross_num=car_samestartid[k].size();//在这个时刻出发的车辆的数量
+	     // car[ite_time].speed_max;
+	      //if(car_cross_num>2){
+		 
+	      }
+	      //cout<<"road_channel.size(): "<<road_channel.size()<<"road_channel.max_size: "<<road_channel.max_size()<<endl;
+	      road_channel.clear();
+	    }
+	*/
+	}
+	cout<<"输出结束"<<endl;
 	
 	//test of smallest_path
 	/*vector<int>::iterator ite;

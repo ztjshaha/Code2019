@@ -32,11 +32,13 @@ struct Node {
 	int flag;
 	int car_dirction;
 	int car_id;
+	int car_channel;
 	int car_position;
 	int car_speed;
 	int car_passed;
 	int car_pass;
 	Node *next;
+	int is_moved;
 };
  
 #endif //TEST1_NODE_H

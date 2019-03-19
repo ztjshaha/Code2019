@@ -9,5 +9,6 @@ class Cross{
  public:
     int cross_id;
     int road_id[4];
+    void cross(int cross_num,int car_num,vector<int>&car);
 };
 #endif

@@ -13,6 +13,8 @@ string
 ../class/string
 vector
 -
+deque
+-
 
 ../class/cross.h
 iostream
