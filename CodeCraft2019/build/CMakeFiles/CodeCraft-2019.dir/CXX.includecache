@@ -83,6 +83,6 @@ node.h
 /home/zt/work/Code2019/CodeCraft2019/lib/node.h
 
 /home/zt/work/Code2019/CodeCraft2019/lib/node.h
-vector
-/home/zt/work/Code2019/CodeCraft2019/lib/vector
+deque
+-
 

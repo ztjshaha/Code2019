@@ -1,6 +1,7 @@
 #ifndef NODE_H
 #define NODE_H
-#include "vector"
+#include <deque>
+using namespace std;
 /*class CarState
 {  
 public:
@@ -29,16 +30,28 @@ public:
 };*/ 
 struct Node {
 	//int data = 100;
-	int flag;
-	int car_dirction;
-	int car_id;
-	int car_channel;
-	int car_position;
-	int car_speed;
-	int car_passed;
-	int car_pass;
 	Node *next;
-	int is_moved;
+
+	
+	 int flag;		//1 等待出发
+			//0 等待行驶
+			//-1 终止行驶
+			
+			
+        int car_dirction;
+        int car_position;
+        int car_channel;// 1 2 3分别三个车道数据
+        int car_id;
+        int car_speed;
+        bool token;  //第一优先级车辆标志，是则为1，不是则为0
+        deque <int> car_passed;
+        deque <int> car_pass;
+        int car_turn;	//D 	:	 1
+			//L	:	 0
+			//R	:	-1
+			
+        int is_moved;	//0 move 
+			//1 no move
 };
  
 #endif //TEST1_NODE_H

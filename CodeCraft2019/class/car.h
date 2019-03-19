@@ -11,10 +11,10 @@ typedef struct Car_Situation
    // int set_out;        //1 已经出发 
 			//0 还未出发
   
-    int flag;		//2 等待出发
-			//1 等待行驶
-			//0 行驶结束
-			//-1 终止行驶	 
+    int flag;		//1 等待出发
+			//0 等待行驶
+			//-1 终止行驶
+			
 			
     int car_dirction;
     int	car_position;
@@ -40,7 +40,7 @@ class Car{
     int speed_max;
     int start_time;  
     Car_Situation situation;
-    vector<int> car_path;
+    //vector<int> car_path;
     Car()
     {
       //situation.set_out=NULL;

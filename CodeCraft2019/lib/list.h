@@ -9,7 +9,7 @@ class Linklist {
 public:
 	Linklist();
 	int i;
-	void AddNode(int data[7]);        //尾插入法创建链表
+	void AddNode(int data[],deque <int> passed,deque <int> pass);        //尾插入法创建链表
 	int Delete(int i);             //删除表中元素
 	int GetData(int i,int data[7]);            //取得表中元素值
         int Search_i(int obj);           //在表中寻找匹配项
@@ -25,7 +25,7 @@ Linklist::Linklist()
 	Head->next = nullptr;
 }
 
-void Linklist::AddNode(int data[7]) 
+void Linklist::AddNode(int data[],deque <int> passed,deque <int> pass) 
 {      //尾插入法创建链表
 	Node *p;
 	Node *temp;
@@ -33,11 +33,16 @@ void Linklist::AddNode(int data[7])
 	temp = new Node;
 	temp->flag=data[0];
 	temp->car_dirction=data[1];
-	temp->car_id=data[2];
-	temp->car_position=data[3];
-	temp->car_speed=data[4];
-//	temp->car_passed=data[5];
-//	temp->car_pass=data[6];
+	temp->car_position=data[2];
+	temp->car_channel=data[3];
+	temp->car_id=data[4];
+	temp->car_speed=data[5];
+	temp->token=data[6];//***
+	temp->car_turn=data[7];
+	temp->is_moved=data[8];
+	temp->car_passed=passed;
+	temp->car_pass=pass;
+	
 	p->next = temp;
 	p = temp;
 	p->next = nullptr;
