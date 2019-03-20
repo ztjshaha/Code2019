@@ -2,6 +2,7 @@
 #define LIST_H
 #include <iostream>
 #include "node.h"
+#include  <stdlib.h>
 using namespace std;
 
 
@@ -27,7 +28,7 @@ Linklist::Linklist()
 
 void Linklist::AddNode(int data[],deque <int> passed,deque <int> pass) 
 {      //尾插入法创建链表
-	Node *p;
+/*	Node *p;
 	Node *temp;
 	p = Head;
 	temp = new Node;
@@ -45,7 +46,32 @@ void Linklist::AddNode(int data[],deque <int> passed,deque <int> pass)
 	
 	p->next = temp;
 	p = temp;
-	p->next = nullptr;
+	p->next = nullptr;*/
+	Node *p;
+	Node *temp;
+	
+	temp=(Node *)malloc(sizeof(Node));
+	temp = new Node;
+	temp->flag=data[0];
+	temp->car_dirction=data[1];
+	temp->car_position=data[2];
+	temp->car_channel=data[3];
+	temp->car_id=data[4];
+	temp->car_speed=data[5];
+	temp->token=data[6];//***
+	temp->car_turn=data[7];
+	temp->is_moved=data[8];
+	temp->car_passed=passed;
+	temp->car_pass=pass;
+	temp->next=nullptr;
+	
+	p=Head;
+	while(p->next!=nullptr)
+	{
+	  p=p->next;
+	}
+	p->next=temp;
+//	p->next=nullptr;
 }
 
 int Linklist::Delete(int i) {          //删除i处的数据

@@ -47,6 +47,8 @@ iostream
 -
 node.h
 ../lib/node.h
+stdlib.h
+-
 
 /home/zt/work/Code2019/CodeCraft2019/CodeCraft-2019.cpp
 iostream
@@ -81,6 +83,8 @@ iostream
 -
 node.h
 /home/zt/work/Code2019/CodeCraft2019/lib/node.h
+stdlib.h
+-
 
 /home/zt/work/Code2019/CodeCraft2019/lib/node.h
 deque

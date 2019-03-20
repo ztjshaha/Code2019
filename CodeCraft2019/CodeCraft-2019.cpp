@@ -104,7 +104,7 @@ int velocity(int car_i,int road_i)
 
 
 //车只在一条路上(无阻挡)  //到不了路口  (可以直接到)
-void update_car_in_road(int car_i,int road_num,int road_channel)
+void update_car_in_road(int car_i,int road_num,int road_channel,int bb)
 {
   //////////////////////////////车状态变化///////////////////////////////////
   //到不了路口
@@ -153,7 +153,8 @@ void update_car_in_road(int car_i,int road_num,int road_channel)
   car[car_i].situation.car_speed=velocity(car_i,road_s);
   car_data[5]=car[car_i].situation.car_speed;
   
-  car[car_i].situation.car_position=car[car_i].situation.car_position + car[car_i].situation.car_speed; //位置变化
+  //car[car_i].situation.car_position=car[car_i].situation.car_position + car[car_i].situation.car_speed; //位置变化
+  car[car_i].situation.car_position=car[car_i].situation.car_position + bb;
   car_data[2]=car[car_i].situation.car_position;
   
   car[car_i].situation.road_id=map3d[car[car_i].situation.car_passed.front()-1][car[car_i].situation.car_pass.front()-1][0];
@@ -298,10 +299,12 @@ int first_channel(Node * car_link ,int dirction , int channel)//, int &short_pos
 }
 
 //在一段路上行驶
-int car_passdistence(int channel,int car_id,Node * car_link)
+int car_passdistence(int channel,int car_id,Node * car_link,int road_s)
 {
   Node *temp;
-    int vmax=car[car_id].situation.car_speed;
+  
+   //int vmax=car[car_id].situation.car_speed;
+  int vmax=velocity(car_id,road_s);  
   int thiscar_s=car[car_id].situation.car_position;
   if(car_link==NULL)
   {
@@ -785,8 +788,9 @@ int main(int argc, char *argv[])
 			int aa=first_channel(lookfor_road(road_s),car[*ite_time].situation.car_pass[1],map3d[k][car[*ite_time].situation.car_pass[1]-1][3]);
 			cout<<"map3d[k][car[*ite_time].situation.car_pass[1]-1][3]:"<<map3d[k][car[*ite_time].situation.car_pass[1]-1][3]<<endl;
 			cout<<car[*ite_time].situation.car_pass[1]<<endl;
-			cout <<aa<<endl;
-			
+			cout <<"aa="<<aa<<endl;
+			int bb=car_passdistence(aa,*ite_time,lookfor_road(road_s),road_s);
+			cout<<"bb="<<bb<<endl;
 			//car[*ite_time].situation.flag=;//等待出发
 			//cout<<"car_id:"<<*ite_time<<"flag:"<<car[*ite_time].situation.flag<<"  ";
 			//cout<<endl;
@@ -799,35 +803,36 @@ int main(int argc, char *argv[])
 		        //cout<<aa<<endl;
 			//int Car_S=car_passdistence(aa,*ite_time,lookfor_road(road_s));
 			//cout<<Car_S<<endl;
-			update_car_in_road(*ite_time,road_num,aa);
+			update_car_in_road(*ite_time,road_num,aa,bb);
 			update_road_in(road_s);
 			Node* n=lookfor_road(road_s);
+			if(n!=NULL){
+			  
 			
 			cout<<"car_passed.front()="<<n->next->car_passed.back()<<endl;
 			cout<<"car_position="<<n->next->car_position<<endl;
 			cout<<"car_channel="<<n->next->car_channel<<endl;
-		      //}
-			//else
-			 // {
-			    //car[*ite_time].situation.flag=0;
-			    //cout<<"car_id:"<<*ite_time<<"flag"<<car[*ite_time].situation.flag<<"  ";
-			    
-			 // }
+			}
+			cout << endl;
 		      
 		 }
 			else
 			  {
-				  
+			    cout<<"car_id= "<<*ite_time<<endl;
 			    int road_s=0;
 			    cout<<map3d[k][car[*ite_time].situation.car_pass[1]-1][0]<<endl;
 			    road_s=road_in_to_i(map3d[k][car[*ite_time].situation.car_pass[1]-1][0],road_num);//查询行驶道路编号
-			    cout <<"road_s"<<road_s<<endl;
+			    cout <<"road_s="<<road_s<<endl;
 			    int aa=first_channel(lookfor_road(road_s),car[*ite_time].situation.car_pass[1],map3d[k][car[*ite_time].situation.car_pass[1]-1][3]);
-			    int bb=car_passdistence(aa,*ite_time,lookfor_road(road_s));
-			    cout <<"aa:  "<<aa<<"  bb:"<<bb<<endl;
-
-			    update_car_in_road(*ite_time,road_num,aa);
+			    cout<<"map3d[k][car[*ite_time].situation.car_pass[1]-1][3]:"<<map3d[k][car[*ite_time].situation.car_pass[1]-1][3]<<endl;
+			    cout<<"car[*ite_time].situation.car_pass[1]="<<car[*ite_time].situation.car_pass[1]<<endl;
+			    //int bb=car_passdistence(aa,*ite_time,lookfor_road(road_s));
+			    cout <<"aa:  "<<aa<<endl;
+			    int bb=car_passdistence(aa,*ite_time,lookfor_road(road_s),road_s);
+			    cout<<"bb="<<bb<<endl;
+			    update_car_in_road(*ite_time,road_num,aa,bb);
 			    update_road_in(road_s);
+			    //update_road_in
 			    Node* n=lookfor_road(road_s);
 			
 			    cout<<"car_position="<<n->next->car_position<<endl;		
