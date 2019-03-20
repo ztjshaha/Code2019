@@ -1,0 +1,12 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/zt/work/Code2019/CodeCraft-2019/CodeCraft-2019.cpp
+iostream
+/home/zt/work/Code2019/CodeCraft-2019/iostream
+

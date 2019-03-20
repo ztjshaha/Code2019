@@ -66,12 +66,12 @@ void Linklist::AddNode(int data[],deque <int> passed,deque <int> pass)
 	temp->next=nullptr;
 	
 	p=Head;
-	while(p->next!=nullptr)
+	while(p->next!=nullptr)//下一个元素指向哪里
 	{
 	  p=p->next;
 	}
 	p->next=temp;
-//	p->next=nullptr;
+
 }
 
 int Linklist::Delete(int i) {          //删除i处的数据

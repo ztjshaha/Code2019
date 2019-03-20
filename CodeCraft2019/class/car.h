@@ -13,9 +13,7 @@ typedef struct Car_Situation
   
     int flag;		//1 等待出发
 			//0 等待行驶
-			//-1 终止行驶
-			
-			
+			//-1 终止行驶		
     int car_dirction;
     int	car_position;
     int car_channel;// 1 2 3分别三个车道数据
