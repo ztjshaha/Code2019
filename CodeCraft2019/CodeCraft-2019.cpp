@@ -132,6 +132,10 @@ void update_car_in_road(int car_i,int road_num,int road_channel,int car_passdist
 			
 //     int is_moved;	//0 move 
 			//1 no move
+  for(int i=0;i<9;i++)
+      car_data[i]=-3;   //清空数组
+  passed.clear();
+  pass.clear();    
 			
   car[car_i].situation.flag=1;
   car_data[0]=car[car_i].situation.flag;
@@ -154,9 +158,10 @@ void update_car_in_road(int car_i,int road_num,int road_channel,int car_passdist
   car[car_i].situation.car_speed=velocity(car_i,road_s);
   car_data[5]=car[car_i].situation.car_speed;
   
+  car_data[2]=car[car_i].situation.car_position+ car_passdist;
   //car[car_i].situation.car_position=car[car_i].situation.car_position + car[car_i].situation.car_speed; //位置变化
   car[car_i].situation.car_position=car[car_i].situation.car_position + car_passdist;
-  car_data[2]=car[car_i].situation.car_position;
+  
   
   car[car_i].situation.road_id=map3d[car[car_i].situation.car_passed.front()-1][car[car_i].situation.car_pass.front()-1][0];
   cout<<"update_road_id:"<<car[car_i].situation.road_id<<endl;
@@ -172,7 +177,10 @@ void update_car_in_road(int car_i,int road_num,int road_channel,int car_passdist
   car_data[6]=-2;
   car_data[7]=-2;
 
-  
+  			    cout<<"car_id="<<car[car_i].id<<endl;
+			    cout<<"car_passed.back()="<<car[car_i].situation.car_passed.back()<<endl;
+			    cout<<"car_position="<<car[car_i].situation.car_position<<endl;
+			    cout<<"car_channel="<<car[car_i].situation.car_channel<<endl;
   
 }
 
@@ -379,46 +387,43 @@ vector<int> Cross_first_car(int cross_id)//测试  不能通过OK  通过后续�
     if(road_serial[i]!=-1)
     {
     temp[j]=road[road_serial[i]-5000].Cur_Road.Head;
-//     cout<<"temp[j]->next->car_id="<<temp[j]->next->car_id<<endl;
-//     cout<<"temp[j]->next->car_position="<<temp[j]->next->car_position<<endl;
-//     cout<<"temp[j]->next->flag="<<temp[j]->next->flag<<endl;
-//     
-//     cout<<"temp[j]->next->car_id="<<temp[j]->next->next->car_id<<endl;
-//     cout<<"temp[j]->next->car_position="<<temp[j]->next->next->car_position<<endl;
-//     cout<<"temp[j]->next->flag="<<temp[j]->next->next->flag<<endl;
     j++; 
+    }else
+    {
+      temp[j]=NULL;
+      j++; 
+    } 
     }
-  }
-  for(int i=0;i<cross_road_num;i++)
+  for(int i=0;i<4;i++)
   {
+    if(temp[i]==NULL)
+    {
+      back_car.push_back(-1);
+      cout << "(没车)back_car.back()="<<back_car.back()<<endl;
+    }else{
     temp[i]=temp[i]->next;
     while(temp[i])
     {
       int max_position=0;
-      
-      if(temp==NULL)
-      {
-       back_car.push_back(-1);//
-       return back_car;
-      }
-      else
-      {
-	if((temp[i]->car_position>max_position)&&(temp[i]->flag==0)&&(temp[i]->car_pass.front()==cross_id))
+	if(temp[i]->car_pass.front()==cross_id)
 	{
-	  max_position=temp[i]->car_position;
-	  car_id.push_back(temp[i]->car_id);
-	  car_id.clear();
+	  cout<<"temp[i]->car_id="<<temp[i]->car_id<<"temp[i]->car_pass.front()="<<temp[i]->car_pass.front()<<endl;
+	    if((temp[i]->car_position>max_position)&&(temp[i]->flag==0))
+	      {
+		max_position=temp[i]->car_position;
+		car_id.push_back(temp[i]->car_id);
+		car_id.clear();
+	      }
+	    if((temp[i]->car_position=max_position)&&(temp[i]->flag==0))
+	      {
+		car_id.push_back(temp[i]->car_id);
+	      }
 	}
-	if((temp[i]->car_position=max_position)&&(temp[i]->flag==0)&&(temp[i]->car_pass.front()==cross_id))
-	{
-	  car_id.push_back(temp[i]->car_id);
-	}
-      }
-    
+    temp[i]=temp[i]->next;
+    }
     if(car_id.size()>1)
-    {
+      {
       vector<int>::iterator ite;
-      
       for(ite=car_id.begin();ite!=car_id.end();++ite)
       {
 	if(ite==car_id.begin())
@@ -437,18 +442,28 @@ vector<int> Cross_first_car(int cross_id)//测试  不能通过OK  通过后续�
 	    }
       } 
       back_car.push_back(sele_car.back());
-    }else
+      cout << "(有车)back_car.back()="<<back_car.back()<<endl;
+    }
+    else
     {
+      if(car_id.size()==1)
+      {
+	back_car.push_back(car_id[0]);
+	cout << "(有车)back_car.back()="<<back_car.back()<<endl;
+	
+      }
+      else{
       back_car.push_back(-1);
-    cout << "back_car.back()="<<back_car.back()<<endl;
+      cout << "(没车)back_car.back()="<<back_car.back()<<endl;
+      }
       
-    }
-    temp[i]=temp[i]->next;
-    }
+      
+    }//找最小路口
   }
-  
+ }
   return back_car;
 }
+
 int roadIndexInCross(int cross_id,int road_id)  //通过cross_id和road_id找到road在cross文件中的下标
 {
   int i = 0;
@@ -582,10 +597,8 @@ int Cross_Sche(int cross_id,int turn[4])
 			return car_id[i];
 		    }
 		}
-		
+      }
     }
-    
-  }
  }
 
 //}
@@ -1098,6 +1111,7 @@ int main(int argc, char *argv[])
 	int car_cross_num=0;
 	vector<int> road_channel;
 	int out_car=0;
+	int cross_car[4];
 	//car_cross_num=car_samestartid[1].size();
 	for(int k=0;k<cross_num;k++){
 	   cout<<endl<<"路口数:"<<k<<endl;
@@ -1118,8 +1132,12 @@ int main(int argc, char *argv[])
 			cout <<"out_channel="<<out_channel<<endl;
 			int out_dist=car_passdistence(out_channel,*ite_time,lookfor_road(road_s),road_s);
 			cout<<"out_dist="<<out_dist<<endl;
+			if(out_dist>0)
+			{
 			update_car_in_road(*ite_time,road_num,out_channel,out_dist);
 			update_road_in(road_s);
+			}
+			
 			Node* n=lookfor_road(road_s);
 			if(n!=NULL){
 			cout<<"car_passed.front()="<<n->next->car_passed.back()<<endl;
@@ -1149,12 +1167,16 @@ int main(int argc, char *argv[])
 			    cout <<"out_channel:  "<<out_channel<<endl;
 			    int out_dist=car_passdistence(out_channel,*ite_time,lookfor_road(road_s),road_s);
 			    cout<<" out_dist="<<out_dist<<endl;
+			    
+			    if(out_dist>0)
+			    {
 			    update_car_in_road(*ite_time,road_num,out_channel,out_dist);
 			    update_road_in(road_s);
+			    }
+			    
 			    Node* n=lookfor_road(road_s);
-			    cout<<"car_passed.back()="<<n->next->car_passed.back()<<endl;
-			    cout<<"car_position="<<n->next->car_position<<endl;
-			    cout<<"car_channel="<<n->next->car_channel<<endl;
+
+
 			    if(out_dist>0)
 			      {
 				out_car++;
@@ -1169,7 +1191,8 @@ int main(int argc, char *argv[])
 	  {
 	    cout<<" first_car= "<<*first_car;
 	  }*/
-	  //Cross_Sche(k);
+	  int id=Cross_Sche(k,cross_car);
+	  cout<<"id= "<<id<<endl;
 	}
 	//cout<<"-3%4="<<(-3)%4;
 	// TODO:write output file
