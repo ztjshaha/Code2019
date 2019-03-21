@@ -69,14 +69,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/zt/work/Code2019/build/CMakeFiles /home/zt/work/Code2019/build/CMakeFiles/progress.marks
-	$(MAKE) -f CMakeFiles/Makefile2 all
+	cd /home/zt/work/Code2019/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/zt/work/Code2019/build/CMakeFiles /home/zt/work/Code2019/build/lib/CMakeFiles/progress.marks
+	cd /home/zt/work/Code2019/build && $(MAKE) -f CMakeFiles/Makefile2 lib/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/zt/work/Code2019/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) -f CMakeFiles/Makefile2 clean
+	cd /home/zt/work/Code2019/build && $(MAKE) -f CMakeFiles/Makefile2 lib/clean
 .PHONY : clean
 
 # The main clean target
@@ -85,55 +85,18 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/zt/work/Code2019/build && $(MAKE) -f CMakeFiles/Makefile2 lib/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/zt/work/Code2019/build && $(MAKE) -f CMakeFiles/Makefile2 lib/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/zt/work/Code2019/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
-
-#=============================================================================
-# Target rules for targets named CodeCraft-2019
-
-# Build rule for target.
-CodeCraft-2019: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 CodeCraft-2019
-.PHONY : CodeCraft-2019
-
-# fast build rule for target.
-CodeCraft-2019/fast:
-	$(MAKE) -f CMakeFiles/CodeCraft-2019.dir/build.make CMakeFiles/CodeCraft-2019.dir/build
-.PHONY : CodeCraft-2019/fast
-
-CodeCraft-2019.o: CodeCraft-2019.cpp.o
-.PHONY : CodeCraft-2019.o
-
-# target to build an object file
-CodeCraft-2019.cpp.o:
-	$(MAKE) -f CMakeFiles/CodeCraft-2019.dir/build.make CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o
-.PHONY : CodeCraft-2019.cpp.o
-
-CodeCraft-2019.i: CodeCraft-2019.cpp.i
-.PHONY : CodeCraft-2019.i
-
-# target to preprocess a source file
-CodeCraft-2019.cpp.i:
-	$(MAKE) -f CMakeFiles/CodeCraft-2019.dir/build.make CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.i
-.PHONY : CodeCraft-2019.cpp.i
-
-CodeCraft-2019.s: CodeCraft-2019.cpp.s
-.PHONY : CodeCraft-2019.s
-
-# target to generate assembly for a file
-CodeCraft-2019.cpp.s:
-	$(MAKE) -f CMakeFiles/CodeCraft-2019.dir/build.make CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.s
-.PHONY : CodeCraft-2019.cpp.s
 
 # Help Target
 help:
@@ -141,12 +104,8 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... CodeCraft-2019"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... CodeCraft-2019.o"
-	@echo "... CodeCraft-2019.i"
-	@echo "... CodeCraft-2019.s"
 .PHONY : help
 
 
@@ -158,6 +117,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/zt/work/Code2019/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

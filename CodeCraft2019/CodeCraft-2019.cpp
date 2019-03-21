@@ -403,13 +403,13 @@ vector<int> Cross_first_car(int cross_id)//测试  不能通过OK  通过后续�
       }
       else
       {
-	if((temp[i]->car_position>max_position)&&(temp[i]->flag==0))
+	if((temp[i]->car_position>max_position)&&(temp[i]->flag==0)&&(temp[i]->car_pass.front()==cross_id))
 	{
 	  max_position=temp[i]->car_position;
 	  car_id.push_back(temp[i]->car_id);
 	  car_id.clear();
 	}
-	if((temp[i]->car_position=max_position)&&(temp[i]->flag==0))
+	if((temp[i]->car_position=max_position)&&(temp[i]->flag==0)&&(temp[i]->car_pass.front()==cross_id))
 	{
 	  car_id.push_back(temp[i]->car_id);
 	}
@@ -471,23 +471,28 @@ int findTheNextRoad(Car & car)    //找到当前车辆下一条要驶入的路id
 }
 int nextOrientation(int cross_id,Car & car)    //得到出当前路口时要转向的方向D:0/L:1/R:2
 {
-  int roadi = car.situation.road_id;
-  int roadj = findTheNextRoad(car);
-  int index_i = roadIndexInCross(cross_id,roadi);
-  int index_j = roadIndexInCross(cross_id,roadj);
-  switch ((index_i - index_j + 3) % 3)
+  if(car.situation.car_dirction == car.end)    //if the car is going to arrive its destine in this road. then return 0
+    return 0;
+  else
   {
-    case 0:break;
-    case 1:return 2;
-    case 2:return 0;
-    case 3:return 1;
+    int roadi = car.situation.road_id;
+    int roadj = findTheNextRoad(car);
+    int index_i = roadIndexInCross(cross_id,roadi);
+    int index_j = roadIndexInCross(cross_id,roadj);
+    switch ((index_i - index_j + 4) % 4)
+    {
+      case 0:break;
+      case 1:return 2;
+      case 2:return 0;
+      case 3:return 1;
+    }
   }
 }
 
 int Cross_Sche(int cross_id,int turn[4])
 {
   vector<int> car_id;
-
+  int next_road_id=0;
   car_id=Cross_first_car(cross_id);
   for(int i=0;i<4;i++)
   {
@@ -500,7 +505,88 @@ int Cross_Sche(int cross_id,int turn[4])
     turn[i]=nextOrientation(cross_id,car[car_id[i]]);
   }
   }
-}
+  for(int i=0;i<4;i++)
+  {
+    switch(turn[i])
+    {
+      case -1: 	return -1;//没车
+      case 0: 	return car_id[i];
+      case 1:	{	//如果左转
+		  for(int j=0;j<4;j++)//找出上一个路口
+		  {
+		    if(cross[cross_id].road_id[j]==car[car_id[i]].situation.road_id)
+		    {
+		      if((j+1)<4)
+			next_road_id=j+1;
+		      else
+			next_road_id=0;
+		    }
+		  }
+		    for(int i=0;i<4;i++)
+		    {
+		      if(cross[cross_id].road_id[next_road_id]=-1)
+			return car_id[i];
+		      else 
+			if(cross[cross_id].road_id[next_road_id]==car[car_id[i]].situation.road_id)//找到了上一个路口的车
+			  {
+			    if(turn[i]==0);
+			      car[car_id[i]].situation.flag=0;//等待
+			  }
+			  else
+			    return car_id[i];
+		    }
+	
+		}
+      case 2:	{ //如果右拐
+		  for(int j=0;j<4;j++)//找出上一个路口
+		  {
+		    if(cross[cross_id].road_id[j]==car[car_id[i]].situation.road_id)
+		    {
+		      if((j-1)>=0)
+			next_road_id=j-1;
+		      else
+			next_road_id=j+3;
+		    }
+		  }
+		    for(int i=0;i<4;i++)
+		    {
+		      if(cross[cross_id].road_id[next_road_id]==car[car_id[i]].situation.road_id)//找到了上一个路口的车
+		      {
+			if(turn[i]==0);
+			  car[car_id[i]].situation.flag=0;//等待
+		      }
+		      else
+			return car_id[i];
+		    }
+		    //////////////////////////////////////////////////////////////////////////////////////////////
+		    for(int j=0;j<4;j++)//找出上一个路口
+		  {
+		    if(cross[cross_id].road_id[j]==car[car_id[i]].situation.road_id)
+		    {
+		      if((j+2)==4)
+			next_road_id=0;
+		      else if((j+2)==5)
+			next_road_id=1;
+		      else
+			next_road_id=j+2;
+		    }
+		  }
+		    for(int i=0;i<4;i++)
+		    {
+		      if(cross[cross_id].road_id[next_road_id]==car[car_id[i]].situation.road_id)//找到了上一个路口的车
+		      {
+			if(turn[i]==1);
+			  car[car_id[i]].situation.flag=0;//等待
+		      }
+		      else
+			return car_id[i];
+		    }
+		}
+		
+    }
+    
+  }
+ }
 
 //}
 //查询道路状态（最后面的车在哪里）?????方向如何考虑

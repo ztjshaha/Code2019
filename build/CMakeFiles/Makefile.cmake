@@ -7,7 +7,8 @@ SET(CMAKE_DEPENDS_GENERATOR "Unix Makefiles")
 # The top level Makefile was generated from the following files:
 SET(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
-  "/home/zt/work/Code2019/CodeCraft-2019/CMakeLists.txt"
+  "/home/zt/work/Code2019/CodeCraft2019/CMakeLists.txt"
+  "/home/zt/work/Code2019/CodeCraft2019/lib/CMakeLists.txt"
   "CMakeFiles/2.8.12.2/CMakeCCompiler.cmake"
   "CMakeFiles/2.8.12.2/CMakeCXXCompiler.cmake"
   "CMakeFiles/2.8.12.2/CMakeSystem.cmake"
@@ -60,6 +61,7 @@ SET(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/2.8.12.2/CMakeCCompiler.cmake"
   "CMakeFiles/2.8.12.2/CMakeCXXCompiler.cmake"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
+  "lib/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
