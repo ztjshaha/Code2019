@@ -58,7 +58,7 @@ void Linklist::AddNode(int data[],deque <int> passed,deque <int> pass)
 	temp->car_channel=data[3];
 	temp->car_id=data[4];
 	temp->car_speed=data[5];
-	temp->token=data[6];//***
+	temp->token=data[6];
 	temp->car_turn=data[7];
 	temp->is_moved=data[8];
 	temp->car_passed=passed;

@@ -21,6 +21,8 @@ iostream
 -
 string
 ../class/string
+vector
+-
 
 ../class/map.h
 iostream
@@ -62,6 +64,8 @@ fstream
 limits.h
 -
 valarray
+-
+cstring
 -
 road.h
 /home/zt/work/Code2019/CodeCraft2019/road.h
