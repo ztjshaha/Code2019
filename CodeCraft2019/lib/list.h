@@ -12,7 +12,7 @@ public:
 	int i;
 	void AddNode(int data[],deque <int> passed,deque <int> pass);        //尾插入法创建链表
 	int Delete(int i);             //删除表中元素
-	int GetData(int i,int data[7]);            //取得表中元素值
+	int GetData(int i, int data[] , deque <int> passed , deque <int> pass);            //取得表中元素值
         int Search_i(int obj);           //在表中寻找匹配项
 	Node * Search(int obj);
 	int ListLength();              //获得表的长度
@@ -28,25 +28,7 @@ Linklist::Linklist()
 
 void Linklist::AddNode(int data[],deque <int> passed,deque <int> pass) 
 {      //尾插入法创建链表
-/*	Node *p;
-	Node *temp;
-	p = Head;
-	temp = new Node;
-	temp->flag=data[0];
-	temp->car_dirction=data[1];
-	temp->car_position=data[2];
-	temp->car_channel=data[3];
-	temp->car_id=data[4];
-	temp->car_speed=data[5];
-	temp->token=data[6];//***
-	temp->car_turn=data[7];
-	temp->is_moved=data[8];
-	temp->car_passed=passed;
-	temp->car_pass=pass;
-	
-	p->next = temp;
-	p = temp;
-	p->next = nullptr;*/
+
 	Node *p;
 	Node *temp;
 	
@@ -58,7 +40,7 @@ void Linklist::AddNode(int data[],deque <int> passed,deque <int> pass)
 	temp->car_channel=data[3];
 	temp->car_id=data[4];
 	temp->car_speed=data[5];
-	temp->token=data[6];
+	temp->token=data[6];//***
 	temp->car_turn=data[7];
 	temp->is_moved=data[8];
 	temp->car_passed=passed;
@@ -94,7 +76,7 @@ int Linklist::Delete(int i) {          //删除i处的数据
 	}
 }
 
-int Linklist::GetData(int i,int data[7]){         //得到i处的元素
+int Linklist::GetData(int i, int data[] , deque <int> passed , deque <int> pass){         //得到i处的元素
 	Node *temp;
 	temp = Head;
 	int j = 0;
@@ -108,21 +90,19 @@ int Linklist::GetData(int i,int data[7]){         //得到i处的元素
 		return -1;
 	}
 	else {
-		cout << i << "处的数据为：" << "flag:"<<temp->flag << "\n"
-					  << "car_dirction:"<<temp->car_dirction << "\n"
-					  << "car_id:"<<temp->car_id << "\n"
-					  << "car_position:"<<temp->car_position << "\n"
-					  << "car_speed:"<<temp->car_speed << "\n";
-//					  << "car_passed:"<<temp->car_passed << "\n"
-//					  << "car_pass:"<<temp->car_pass << "\n";
-					  data[0]=temp->flag;
-					  data[1]=temp->car_dirction;
-					  data[2]=temp->car_id;
-					  data[3]=temp->car_position;
-					  data[4]=temp->car_speed;
-//					  data[5]=temp->car_passed;
-//					  data[6]=temp->car_pass;
+		data[0]=temp->flag;
+	        data[1]=temp->car_dirction;
+	        data[2]=temp->car_position;
+                data[3]=temp->car_channel;
+		data[4]=temp->car_id;
+                data[5]=temp->car_speed;
+                data[6]=temp->token;//***
+                data[7]=temp->car_turn;
+		data[8]=temp->is_moved;
+		passed=temp->car_passed;
+                pass=temp->car_pass;	
 		return 0;
+
 	}
 }
 
@@ -131,7 +111,7 @@ int Linklist::Search_i(int obj) {       //寻找链表中有无与obj匹配的�
 	int j = 1;
 	Node *temp;
 	temp = Head->next;
-	while (temp && temp->next->car_id != obj) {
+	while (  temp->car_id != obj) {
 		temp = temp->next;
 		j++;
 	}
@@ -140,7 +120,7 @@ int Linklist::Search_i(int obj) {       //寻找链表中有无与obj匹配的�
 		return 0;
 	}
 	else {
-		cout << "在该链表中的第" << j << "car等于" << obj << "\n";
+//		cout << "在该链表中的第" << j << " car等于" << obj << "\n";
 		return j;
 	}
 	//temp->next= NULL;
@@ -151,16 +131,16 @@ Node * Linklist::Search(int obj) {       //寻找链表中有无与obj匹配的�
 //	int j = 1;
 	Node *temp;
 	temp = Head->next;
-	while (temp && temp->next->car_id != obj) {
+	while (temp->car_id != obj) {   //  temp && temp->next->car_id != obj
 		temp = temp->next;
 //		j++;
-		return temp;
 	}
 	
-	if (temp == NULL) {
+/*	if (temp == NULL) {
 		cout << "该链表中无此car" << "\n";
 		return NULL;
-	}
+	}*/
+	return temp;
 	//temp->next= NULL;
 }
 
