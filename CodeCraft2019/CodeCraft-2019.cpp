@@ -46,9 +46,9 @@ int sys_clk=1;
 int car_data[9];
 deque <int> passed;
 deque <int> pass;
+int cars;
 
-    int cars;
-
+int first_channel(Node * car_link ,int dirction , int channel);
 //通过路的id查找哪条路
 int road_in_to_i(int roadid,int road_num)
 {
@@ -306,7 +306,6 @@ Node * lookfor_road(int roadi)
 
 int road_sche(Node * car_link,int car_id,int road_num)
 {
-  Node *temp; 
   Node *p;
   int position=0;
   int min_position=-1;
@@ -641,7 +640,9 @@ int Cross_Sche(int cross_id)
 			if(cross[cross_id].road_id[next_road_id]==car[car_id[k]].situation.road_id)//找到了上一个路口的车
 			{
 			  if(turn[i]==0)
+			  {
 			  car[car_id[i]].situation.flag=0;//等待
+			  }
 			}
 			//else
 			  //return car_id[i];
@@ -662,8 +663,11 @@ int Cross_Sche(int cross_id)
 		      {//有车
 			if(cross[cross_id].road_id[next_road_id]==car[car_id[g]].situation.road_id)//找到了上一个路口的车
 			{
+			  
 			  if(turn[g]==1)
+			  {
 			  car[car_id[i]].situation.flag=0;//等待
+			  }
 			}
 			  else
 			  {
@@ -681,10 +685,131 @@ int Cross_Sche(int cross_id)
   }
    return back_carid;
 }
-
+int car_into_next_road_position(Node * car,int channel,int dirction)
+{
+  Node * temp;
+  temp=car->next;
+  int min_position=0;
+  while(temp)
+  {
+    if((temp->car_channel==channel)&&(temp->car_dirction==dirction))//如果等于1 就进入状态更新
+      {
+	if(min_position>temp->car_position)
+	  min_position=temp->car_position;
+      }
+      temp=temp->next;
+  }
+  return min_position;
+}
+int next_road_cari(Node * car,int channel,int minposition,int dirction)
+{
+  Node * temp;
+  temp=car->next;
+  int car_id=0;
+  while(temp)
+  {
+    if((temp->car_channel==channel)&&(temp->car_position==minposition)&&(temp->car_dirction==dirction))//如果等于1 就进入状态更新
+      {
+	car_id=temp->car_id;
+      }
+      temp=temp->next;
+  }
+  return car_id;
+  
+}
+void cross_car_update(int car_id,int road_num)
+{
+  Node *p;
+  int next_road_id=road_in_to_i(map3d[car[car_id].situation.car_pass.front()-1][car[car_id].situation.car_pass[1]-1][0],road_num);//查询行驶道路编号
+  int sele_channel=first_channel(lookfor_road(next_road_id),car[car_id].situation.car_pass[1],//获取下一条路可以通行的道路
+				 map3d[car[car_id].situation.car_pass.front()-1][car[car_id].situation.car_pass[1]-1][3]);
+  cout<<"car_id:"<<car_id<<"sele_channel="<<sele_channel<<endl;
+  int car_id_roadi=road_in_to_i(car[car_id].situation.road_id,road_num);//车的道路ID
+  int car1_length_posotion=road[car_id_roadi].length-car[car_id_roadi].situation.car_position;//车在入口前的道路长度-position
+  int car_V1max=velocity(car_id,car_id_roadi);//在入口前道路1的最大速度
+  int car_V2max=velocity(car_id,next_road_id);//在入口后第二条道路的最大速度
+  int carV=min(car_V1max,car_V2max);//车的最大速度
+  int car_position2=car_into_next_road_position(lookfor_road(next_road_id),sele_channel,car[car_id].situation.car_pass[2]);//第二条路的最近的车position
+  int data[9];
+  if(sele_channel==-1)//-1 代表下一个车道没有位置
+  {
+    p=road[next_road_id].Cur_Road.Head;
+    p=p->next;
+    while(p)//找出下一个车道的所有position = 1的车判断状态
+    {
+      if((p->car_position==1)&&(car[car_id].situation.car_pass[1]))//如果等于1 就进入状态更新
+      {
+	if(car[p->car_id].situation.flag!=-1)//如果存在不终止
+	{
+	  car[car_id].situation.flag=0;//不能过路口终止
+	}else car[car_id].situation.flag=-1;
+      }
+      p=p->next;
+    }
+  }else// i 代表能够进入到下一个车道
+  {
+    if(car_position2>carV-car1_length_posotion){
+      //删除上一条路节点  并添加到下一条路
+      //carV-car1_length_posotion;//加入下一条链的位置
+       road[next_road_id].Cur_Road.Search_i(next_road_cari(lookfor_road(next_road_id),sele_channel,car_position2,car[car_id].situation.car_pass[1]));//删除下一个道路的ID号
+	 /*******************************更新数据*********************************/
+	 car[car_id].situation.flag=-1;
+	 data[0]=car[car_id].situation.flag;						//flag 终止行驶
+	 car[car_id].situation.car_dirction= car[car_id].situation.car_pass[1];
+	 data[1]=car[car_id].situation.car_dirction; 					//方向
+	 car[car_id].situation.car_position= carV-car1_length_posotion;;
+	 data[2]=car[car_id].situation.car_position; 					//位置
+	 car[car_id].situation.car_channel=sele_channel;
+	 data[3]=car[car_id].situation.car_channel;  					//通道
+	 data[4]=car_id;								//ID
+	 car[car_id].situation.car_speed=car_V2max;
+	 data[5]=car_V2max;								//速度
+	 data[6]=-2;									//优先级
+	 data[7]=-2;									//转向
+	 data[8]=0;									//移动
+	 car[car_id].situation.car_passed.push_back(car[car_id].situation.car_pass.front());//设置已经走过的路径
+	 car[car_id].situation.car_pass.pop_front();					//删除已经走过的路径
+	 pass=car[car_id].situation.car_pass;						//未来走的节点
+	 passed=car[car_id].situation.car_passed;					//已经走过的路程		
+	 /**********************************************************************/
+	 road[next_road_id].Cur_Road.AddNode(data,passed,pass);  //加入链表
+      //通过最大速度
+    }else{
+      //判断前车状态
+      if(car[next_road_cari(lookfor_road(next_road_id),sele_channel,car_position2,car[car_id].situation.car_pass[1])].situation.flag==-1){
+	 road[next_road_id].Cur_Road.Search_i(next_road_cari(lookfor_road(next_road_id),sele_channel,car_position2,car[car_id].situation.car_pass[1]));//删除下一个道路的ID号
+	 /*******************************更新数据*********************************/
+	 car[car_id].situation.flag=-1;
+	 data[0]=car[car_id].situation.flag;						//flag 终止行驶
+	 car[car_id].situation.car_dirction= car[car_id].situation.car_pass[1];
+	 data[1]=car[car_id].situation.car_dirction; 					//方向
+	 car[car_id].situation.car_position=car_position2-1;
+	 data[2]=car[car_id].situation.car_position; 					//位置
+	 car[car_id].situation.car_channel=sele_channel;
+	 data[3]=car[car_id].situation.car_channel;  					//通道
+	 data[4]=car_id;								//ID
+	 car[car_id].situation.car_speed=car_V2max;
+	 data[5]=car_V2max;								//速度
+	 data[6]=-2;									//优先级
+	 data[7]=-2;									//转向
+	 data[8]=0;									//移动
+	 car[car_id].situation.car_passed.push_back(car[car_id].situation.car_pass.front());//设置已经走过的路径
+	 car[car_id].situation.car_pass.pop_front();					//删除已经走过的路径
+	 pass=car[car_id].situation.car_pass;						//未来走的节点
+	 passed=car[car_id].situation.car_passed;					//已经走过的路程		
+	 /**********************************************************************/
+	 road[next_road_id].Cur_Road.AddNode(data,passed,pass);  //加入链表
+	//行驶Vmax-1 car_position2-1
+      }
+      if(car[next_road_cari(lookfor_road(next_road_id),sele_channel,car_position2,car[car_id].situation.car_pass[1])].situation.flag==0){
+	car[car_id].situation.flag=0;
+      }
+    }
+  }
+}
   
 //查询道路状态（最后面的车在哪里）?????方向如何考虑
-int first_channel(Node * car_link ,int dirction , int channel)//, int &short_position , int &first
+int first_channel(Node * car_link ,int dirction , int channel)//, int &short_position , int &first//没车返回 0 没位置返回 -1
 {
   Node *temp; 
   int flag=0;
@@ -892,7 +1017,6 @@ void Dijkstra(int cross_num)//,vector<int>& path[cross_num][cross_num])
 			cout << "Source " << k + 1 << " to " << i + 1 << " the shortest " << dis[k][i] << endl << " Path:";			
 			for (ite = path[k][i].begin(); ite != path[k][i].end(); ++ite) {
 			  if (ite == path[k][i].begin())
-	//int data = 100;
 				{
 				  cout << *ite;
 				  //path_out[k][i].;
@@ -1424,12 +1548,7 @@ for(int i=0;i<car_num;i++)
 {
   cout<<"bcar:"<<i;
   for(it=car[i].situation.car_pass.begin(); it != car[i].situation.car_pass.end(); ++it)
-                       cout<<"   "<<*it;
- // cout<<"   "<<car[i].situation.road_id;
-//  cout<<"   "<<car[i].situation.car_dirction;
- // cout<<"   "<<car[i].situation.car_speed;
- // cout<<"   "<<car[i].situation.car_position;
- // cout<<"   "<<car[i].situation.is_moved<<endl;
+  cout<<"   "<<*it;
   cout<<endl;
 
 }
