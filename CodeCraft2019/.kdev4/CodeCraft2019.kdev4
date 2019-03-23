@@ -24,7 +24,7 @@ Name=CodeCraft-2019
 Type=Native Application
 
 [Launch][Launch Configuration 0][Data]
-Arguments=../../../config_10/car.txt ../../../config_10/road.txt ../../../config_10/cross.txt
+Arguments=../../../config_1/car.txt ../../../config_1/road.txt ../../../config_1/cross.txt
 Debugger Shell=
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x1a\x00C\x00o\x00d\x00e\x00C\x00r\x00a\x00f\x00t\x002\x000\x001\x009\x00\x00\x00\x1c\x00C\x00o\x00d\x00e\x00C\x00r\x00a\x00f\x00t\x00-\x002\x000\x001\x009)
 Dependency Action=Build
