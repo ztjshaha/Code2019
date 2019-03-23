@@ -729,7 +729,7 @@ void cross_car_update(int car_id,int road_num)
   int car_V1max=velocity(car_id,car_id_roadi);//在入口前道路1的最大速度
   int car_V2max=velocity(car_id,next_road_id);//在入口后第二条道路的最大速度
   int carV=min(car_V1max,car_V2max);//车的最大速度
-  int car_position2=car_into_next_road_position(lookfor_road(next_road_id),sele_channel,car[car_id].situation.car_pass[2]);//第二条路的最近的车position
+  int car_position2=car_into_next_road_position(lookfor_road(next_road_id),sele_channel,car[car_id].situation.car_pass[1]);//第二条路的最近的车position
   int data[9];
   if(sele_channel==-1)//-1 代表下一个车道没有位置
   {
