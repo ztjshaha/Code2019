@@ -1,0 +1,170 @@
+   
+  /*
+  vector<int> car_id;
+  int next_road_id=0;
+  int nnext_road_id=0;
+  int turn[4];
+  car_id=Cross_first_car(cross_id);
+  int back_carid=-1;
+  for(int i=0;i<4;i++)
+  {
+  cout<<" car_id.back= "<<car_id[i]<<endl;
+  //insertSort(cross[cross_id].road_id, 4);
+  if(car_id[i]==-1)
+    turn[i]=-1;
+  else
+  {
+    turn[i]=nextOrientation(cross_id,car[car_id[i]]);
+    cout<<"turn ="<<turn[i]<<endl;
+    cout<<car[car_id[i]].situation.car_pass.front();
+  }
+  }
+  for(int i=0;i<4;i++)
+  {
+    //cout<<"turn["<<i<<"] ="<<turn[i]<<endl;
+    if(turn[i]==0)
+    {
+      back_carid= car_id[i];
+	return back_carid;
+    }
+      else
+      {
+	if(turn[i]==1)
+	{	//如果左转
+		  for(int j=0;j<4;j++)//找出上一个路口
+		  {
+		    if(cross[cross_id].road_id[j]==car[car_id[i]].situation.road_id)//找到正在行驶车的道路
+		    {
+			next_road_id=(j-1) % 4;
+		    }
+		  }
+		  if(cross[cross_id].road_id[next_road_id]==-1)//没路
+		  {
+		    back_carid= car_id[i];
+		    return back_carid;
+		  } 
+		  else{
+		    for(int k=0;k<4;k++)
+		    {
+		      if(cross[cross_id].road_id[next_road_id]==car[car_id[k]].situation.road_id)//找到了上一个路口的车,如果这条路有车
+			{
+			  if(turn[k]==0)
+			  {
+			    car[car_id[i]].situation.flag=0;//等待
+			    
+			    int roadi = road_in_to_i ( car[car_id[i]].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
+			    Node * link_i = road[roadi].Cur_Road.Search( car_id[i]); //这部车在链表哪个位置
+			    link_i->flag=car[car_id[i]].situation.flag;
+			    
+			    back_carid=-1;//car_id[k];
+			    return back_carid;
+			  }
+			}
+			else
+			  {
+			    back_carid= car_id[i];
+			    //return back_carid;
+			  }
+			}
+		return back_carid;
+		    }
+		}
+		else if(turn[i]==2)
+		{ //如果右拐
+		   
+		  for(int j=0;j<4;j++)//找出上一个路口
+		  {
+		    if(cross[cross_id].road_id[j]==car[car_id[i]].situation.road_id)//找到上一个路口
+		    {
+		      next_road_id=(j + 1) % 4;
+		      nnext_road_id=(j + 2) % 4;
+		    }
+		  }
+		  if((cross[cross_id].road_id[next_road_id]==-1)&&(cross[cross_id].road_id[nnext_road_id]==-1))//没路
+		  {
+		    back_carid= car_id[i];
+		    return back_carid;
+		  }
+		  else//有路
+		  {
+		  for(int k=0;k<4;k++)//找直行
+		  {
+		    if(cross[cross_id].road_id[next_road_id]!=-1)
+		    {
+			if(cross[cross_id].road_id[next_road_id]==car[car_id[k]].situation.road_id)//找到了上一个路口的车
+			{
+			  if(turn[i]==0)
+			  {
+			    car[car_id[i]].situation.flag=0;//等待		    
+			    int roadi = road_in_to_i ( car[car_id[i]].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
+			    Node * link_i = road[roadi].Cur_Road.Search( car_id[i]); //这部车在链表哪个位置
+			    link_i->flag=car[car_id[i]].situation.flag;
+			    back_carid=-1;//car_id[k];
+			    return back_carid;
+			  }
+			}
+		    }else
+		    {
+		      if(cross[cross_id].road_id[nnext_road_id]==car[car_id[k]].situation.road_id)//找到了上一个路口的车
+			{
+			  if(turn[i]==1)
+			  {
+			    car[car_id[i]].situation.flag=0;//等待		    
+			    int roadi = road_in_to_i ( car[car_id[i]].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
+			    Node * link_i = road[roadi].Cur_Road.Search( car_id[i]); //这部车在链表哪个位置
+			    link_i->flag=car[car_id[i]].situation.flag;
+			    back_carid=-1;//car_id[k];
+			    return back_carid;
+			  }
+			  else
+			  {
+			    back_carid=car_id[i];
+			    return back_carid;
+			  }
+			}
+		    }
+		  }
+		  }
+		}
+// 		    /*//////////////////////////////////////////////////////////////////////////////////////////////
+// 		 
+// 		  if(cross[cross_id].road_id[next_road_id]==-1)//没路
+// 		  {
+// 		    back_carid= car_id[i];
+// 		    return back_carid;
+// 		  }
+// 		  else
+// 		  {
+// 		  for(int g=0;g<4;g++)
+// 		  {//有车
+// 			if(cross[cross_id].road_id[next_road_id]==car[car_id[g]].situation.road_id)//找到了上一个路口的车
+// 			{
+// 			  if(turn[g]==1)
+// 			  {
+// 			    car[car_id[i]].situation.flag=0;//等待
+// 			    
+// 			    int roadi = road_in_to_i ( car[car_id[i]].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
+// 			    Node * link_i = road[roadi].Cur_Road.Search( car_id[i]); //这部车在链表哪个位置
+// 			    link_i->flag=car[car_id[i]].situation.flag;
+// 			    
+// 			    
+// 			    back_carid=car_id[g];
+// 			    return back_carid;
+// 			  }
+// 			}
+// 			  else
+// 			  {
+// 			     back_carid=car_id[i];
+// 			      return back_carid;
+// 			  }
+// 			
+// 		      }
+// 		      //back_carid=-1;
+// 		      //return back_carid;
+// 		  }
+// 		}*/
+// 		    else if(turn[i]==-1) back_carid=car_id;
+// 		//return back_carid;
+//       }
+//   }
+//    return back_carid;*/
