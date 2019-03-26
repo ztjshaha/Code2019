@@ -5,7 +5,7 @@
 #include <vector>
 #include <deque>
 using namespace std;
-#define Car_Num    10000
+#define Car_Num    100000
 typedef struct Car_Situation
 {  
    // int set_out;        //1 已经出发 
@@ -42,7 +42,7 @@ class Car{
     Car()
     {
       //situation.set_out=NULL;
-      situation.flag=NULL;
+      situation.flag=2;
       situation.car_dirction=NULL;
       situation.car_position=NULL;
       situation.car_channel=NULL;

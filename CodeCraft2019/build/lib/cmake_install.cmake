@@ -1,4 +1,4 @@
-# Install script for directory: /home/zt/work/Code2019/CodeCraft2019/lib
+# Install script for directory: /home/zt/work/zw/Code2019/CodeCraft2019/lib
 
 # Set the install prefix
 IF(NOT DEFINED CMAKE_INSTALL_PREFIX)

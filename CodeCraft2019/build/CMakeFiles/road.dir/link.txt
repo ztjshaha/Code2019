@@ -1,1 +1,0 @@
-/usr/bin/c++  -fPIC -g   -shared -Wl,-soname,libroad.so -o libroad.so CMakeFiles/road.dir/class/road.cpp.o 

@@ -4,7 +4,7 @@
 #include "string"
 #include <vector>
 using namespace std;
-#define Cross_Num    1000
+#define Cross_Num    10000
 //你的代码写在这里
 class Cross{
  public:

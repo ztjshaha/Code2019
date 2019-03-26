@@ -6,7 +6,7 @@
 #include "../lib/list.h"
 //#include <stdlib.h>
 using namespace std;
-#define Road_Num    2000
+#define Road_Num    20000
 
 typedef struct CarState
 {  
