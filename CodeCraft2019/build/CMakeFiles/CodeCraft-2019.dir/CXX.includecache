@@ -52,43 +52,43 @@ node.h
 stdlib.h
 -
 
-/home/zt/work/zw/Code2019/CodeCraft2019/CodeCraft-2019.cpp
+/home/zt/Codes/Code2019/CodeCraft2019/CodeCraft-2019.cpp
 iostream
-/home/zt/work/zw/Code2019/CodeCraft2019/iostream
+/home/zt/Codes/Code2019/CodeCraft2019/iostream
 string
-/home/zt/work/zw/Code2019/CodeCraft2019/string
+/home/zt/Codes/Code2019/CodeCraft2019/string
 sys/time.h
 -
 fstream
-/home/zt/work/zw/Code2019/CodeCraft2019/fstream
+/home/zt/Codes/Code2019/CodeCraft2019/fstream
 limits.h
 -
 valarray
 -
 road.h
-/home/zt/work/zw/Code2019/CodeCraft2019/road.h
+/home/zt/Codes/Code2019/CodeCraft2019/road.h
 car.h
-/home/zt/work/zw/Code2019/CodeCraft2019/car.h
+/home/zt/Codes/Code2019/CodeCraft2019/car.h
 cross.h
-/home/zt/work/zw/Code2019/CodeCraft2019/cross.h
+/home/zt/Codes/Code2019/CodeCraft2019/cross.h
 lib/lib.h
-/home/zt/work/zw/Code2019/CodeCraft2019/lib/lib.h
+/home/zt/Codes/Code2019/CodeCraft2019/lib/lib.h
 lib/list.h
-/home/zt/work/zw/Code2019/CodeCraft2019/lib/list.h
+/home/zt/Codes/Code2019/CodeCraft2019/lib/list.h
 map.h
-/home/zt/work/zw/Code2019/CodeCraft2019/map.h
+/home/zt/Codes/Code2019/CodeCraft2019/map.h
 
-/home/zt/work/zw/Code2019/CodeCraft2019/lib/lib.h
+/home/zt/Codes/Code2019/CodeCraft2019/lib/lib.h
 
-/home/zt/work/zw/Code2019/CodeCraft2019/lib/list.h
+/home/zt/Codes/Code2019/CodeCraft2019/lib/list.h
 iostream
 -
 node.h
-/home/zt/work/zw/Code2019/CodeCraft2019/lib/node.h
+/home/zt/Codes/Code2019/CodeCraft2019/lib/node.h
 stdlib.h
 -
 
-/home/zt/work/zw/Code2019/CodeCraft2019/lib/node.h
+/home/zt/Codes/Code2019/CodeCraft2019/lib/node.h
 deque
 -
 

@@ -35,10 +35,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/zt/work/zw/Code2019/CodeCraft2019
+CMAKE_SOURCE_DIR = /home/zt/Codes/Code2019/CodeCraft2019
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/zt/work/zw/Code2019/CodeCraft2019/build
+CMAKE_BINARY_DIR = /home/zt/Codes/Code2019/CodeCraft2019/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/CodeCraft-2019.dir/depend.make
@@ -51,17 +51,17 @@ include CMakeFiles/CodeCraft-2019.dir/flags.make
 
 CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o: CMakeFiles/CodeCraft-2019.dir/flags.make
 CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o: ../CodeCraft-2019.cpp
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/zt/work/zw/Code2019/CodeCraft2019/build/CMakeFiles $(CMAKE_PROGRESS_1)
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/zt/Codes/Code2019/CodeCraft2019/build/CMakeFiles $(CMAKE_PROGRESS_1)
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o -c /home/zt/work/zw/Code2019/CodeCraft2019/CodeCraft-2019.cpp
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o -c /home/zt/Codes/Code2019/CodeCraft2019/CodeCraft-2019.cpp
 
 CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/zt/work/zw/Code2019/CodeCraft2019/CodeCraft-2019.cpp > CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/zt/Codes/Code2019/CodeCraft2019/CodeCraft-2019.cpp > CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.i
 
 CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/zt/work/zw/Code2019/CodeCraft2019/CodeCraft-2019.cpp -o CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/zt/Codes/Code2019/CodeCraft2019/CodeCraft-2019.cpp -o CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.s
 
 CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o.requires:
 .PHONY : CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o.requires
@@ -97,6 +97,6 @@ CMakeFiles/CodeCraft-2019.dir/clean:
 .PHONY : CMakeFiles/CodeCraft-2019.dir/clean
 
 CMakeFiles/CodeCraft-2019.dir/depend:
-	cd /home/zt/work/zw/Code2019/CodeCraft2019/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/zt/work/zw/Code2019/CodeCraft2019 /home/zt/work/zw/Code2019/CodeCraft2019 /home/zt/work/zw/Code2019/CodeCraft2019/build /home/zt/work/zw/Code2019/CodeCraft2019/build /home/zt/work/zw/Code2019/CodeCraft2019/build/CMakeFiles/CodeCraft-2019.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/zt/Codes/Code2019/CodeCraft2019/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/zt/Codes/Code2019/CodeCraft2019 /home/zt/Codes/Code2019/CodeCraft2019 /home/zt/Codes/Code2019/CodeCraft2019/build /home/zt/Codes/Code2019/CodeCraft2019/build /home/zt/Codes/Code2019/CodeCraft2019/build/CMakeFiles/CodeCraft-2019.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/CodeCraft-2019.dir/depend
 

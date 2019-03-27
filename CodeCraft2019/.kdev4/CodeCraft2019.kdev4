@@ -2,8 +2,8 @@
 BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x1a\x00C\x00o\x00d\x00e\x00C\x00r\x00a\x00f\x00t\x002\x000\x001\x009)
 
 [CMake]
-Build Directory Count=3
-Current Build Directory Index=2
+Build Directory Count=4
+Current Build Directory Index=3
 ProjectRootRelative=./
 
 [CMake][CMake Build Directory 0]
@@ -30,6 +30,14 @@ Environment Profile=
 Extra Arguments=
 Install Directory=file:///usr/local
 
+[CMake][CMake Build Directory 3]
+Build Directory Path=file:///home/zt/Codes/Code2019/CodeCraft2019/build
+Build Type=Debug
+CMake Binary=file:///usr/bin/cmake
+Environment Profile=
+Extra Arguments=
+Install Directory=file:///usr/local
+
 [Launch]
 Launch Configurations=Launch Configuration 0
 
@@ -40,14 +48,14 @@ Name=CodeCraft-2019
 Type=Native Application
 
 [Launch][Launch Configuration 0][Data]
-Arguments=../../../config_1/car.txt ../../../config_1/road.txt ../../../config_1/cross.txt
+Arguments=../../../config_9/car.txt ../../../config_10/road.txt ../../../config_10/cross.txt
 Debugger Shell=
 Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x1a\x00C\x00o\x00d\x00e\x00C\x00r\x00a\x00f\x00t\x002\x000\x001\x009\x00\x00\x00\x1c\x00C\x00o\x00d\x00e\x00C\x00r\x00a\x00f\x00t\x00-\x002\x000\x001\x009)
 Dependency Action=Build
 Display Demangle Names=true
 Display Static Members=false
 EnvironmentGroup=default
-Executable=file:///home/zt/work/zw/Code2019/CodeCraft2019/build/bin/CodeCraft-2019
+Executable=file:///home/zt/Codes/Code2019/CodeCraft2019/build/bin/CodeCraft-2019
 External Terminal=konsole --noclose --workdir %workdir -e %exe
 GDB Path=
 Project Target=CodeCraft2019,CodeCraft-2019

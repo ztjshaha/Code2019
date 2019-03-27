@@ -39,6 +39,7 @@ vector<vector<int>> road_length;
 vector<vector<vector<int>>> path;
 vector<vector<vector<int>>>map3d;
 int sys_clk=1;
+int pre_roadID = -1;
 
 //data
 //0:flag  1:car_dirction  2:car_position  3:car_channel  
@@ -54,13 +55,13 @@ int cross_car_update(int car_id,int road_num);
 //通过路的id查找哪条路
 /*
  * int all_car_status(){
- *  for(int i=0;i<car_num;i++)
- *  {
- *    if(car[i].situation.flag==0)
- *      return 1;
- *    else
- *      return -1;
- *  }
+ * for(int i=0;i<car_num;i++)
+ * {
+ * if(car[i].situation.flag==0)
+ * return 1;
+ * else
+ * return -1;
+ * }
  * }
  */
 
@@ -264,7 +265,7 @@ void update_car_in_road(int car_i,int road_num,int road_channel,int car_passdist
   car[car_i].situation.car_speed=velocity(car_i,road_s);
   car_data[5]=car[car_i].situation.car_speed;
   
-  car[car_i].situation.car_position=car[car_i].situation.car_position + car_passdist;//位置变化
+  car[car_i].situation.car_position=car_passdist;//位置变化
   car_data[2]=car[car_i].situation.car_position;
   
   car[car_i].situation.road_id=map3d[car[car_i].situation.car_passed.back()-1][car[car_i].situation.car_pass.front()-1][0];
@@ -280,7 +281,11 @@ void update_car_in_road(int car_i,int road_num,int road_channel,int car_passdist
   car_data[4]=car_i;
   car_data[6]=-2;
   car_data[7]=-2;
-  
+  cout << "car_id="<< car_i<<endl;
+  cout <<"position carpart update="<<car[car_i].situation.car_position<<endl;
+  cout <<"dirction carpart update="<<car[car_i].situation.car_dirction<<endl;
+  cout <<"flag carpart update="<<car[car_i].situation.flag<<endl;
+  cout <<"channel carpart update="<<car[car_i].situation.car_channel<<endl;
   
 }
 
@@ -368,7 +373,7 @@ void update_road_in(int roadi)
   //把车的信息直接加到链表中(车的信息)
   road[roadi].Cur_Road.AddNode(car_data,passed,pass);
   
-  //linkinsertSort(road[roadi].Cur_Road.Head);//链表排序
+  linkinsertSort(road[roadi].Cur_Road.Head);//链表排序
 }
 
 
@@ -412,31 +417,32 @@ int road_sche(Node * car_link,int car_id,int road_num)
   if(car[car_id].situation.flag==-1)
   {
     car[car_id].situation.flag=-1;
-    return 0;
+    return -1;
   }
-  if(car_link==NULL)
+  if(car_link->next==NULL)
   {
-    return 0;
+    return -1;
   }
   int road_s;//道路编号转换
   road_s=road_in_to_i(car[car_id].situation.road_id,road_num);//查询行驶道路编号
   p=car_link->next;
   while(p)//遍历找车
   {
-    if(p->car_position>car[car_id].situation.car_position&&p->car_channel==car[car_id].situation.car_channel&&p->car_dirction==car[car_id].situation.car_dirction)//找出前面所有车
+    if((p->car_position>car[car_id].situation.car_position) && (p->car_channel==car[car_id].situation.car_channel) && (p->car_dirction==car[car_id].situation.car_dirction))//找出前面所有车
     {
-      position=p->car_position - car[car_id].situation.car_position;
+      position = (p->car_position - car[car_id].situation.car_position);
       flag=car[p->car_id].situation.flag;
       min_position=position;
+      break;
     }
     p=p->next;
   } 
   p=car_link->next;
   while(p)//遍历找车
   {
-    if(p->car_position>car[car_id].situation.car_position&&p->car_channel==car[car_id].situation.car_channel&&p->car_dirction==car[car_id].situation.car_dirction)//找出前面所有车
+    if((p->car_position>car[car_id].situation.car_position) && (p->car_channel==car[car_id].situation.car_channel) && (p->car_dirction==car[car_id].situation.car_dirction))//找出前面所有车
     {
-      position=p->car_position - car[car_id].situation.car_position;
+      position = (p->car_position - car[car_id].situation.car_position);
       if(min_position>position)
       {
 	flag=car[p->car_id].situation.flag;
@@ -445,7 +451,7 @@ int road_sche(Node * car_link,int car_id,int road_num)
     }
     p=p->next;
   }
-  
+  cout << "MIN Position:" << min_position;
   if(min_position>0)//前方有车,判据(此链同一车道,同一方向,位置大于本车,和本车ID不同)
   {
     if((min_position-car[car_id].situation.car_speed)<=0)//(前车距离-目前车位置-此车Vmax)>0,则有阻拦.
@@ -460,7 +466,7 @@ int road_sche(Node * car_link,int car_id,int road_num)
 	if(car[car_id].situation.flag==0)
 	  return (min_position-1);
 	else
-	  return -1;  
+	  return -1;
       }
     }//是阻拦
     else
@@ -474,35 +480,19 @@ int road_sche(Node * car_link,int car_id,int road_num)
   }
   else//前方没车
   {
-    int roadidnext=road_in_to_i(map3d[car[car_id].situation.car_pass.front()][car[car_id].situation.car_pass[1]][0] , road_num);
-    
-    if((car[car_id].situation.car_speed>(road[road_s].length-car[car_id].situation.car_position))&& //road[road_s].limit_speed
-      ((road[road_s].length-car[car_id].situation.car_position)<
-      velocity(car_id ,roadidnext)))//判断能否出路口//能出路口 
+    if((car[car_id].situation.car_speed>(road[road_s].length-car[car_id].situation.car_position)))//判断能否出路口//能出路口 
     {
       car[car_id].situation.flag=0;
       return -1;
-    }else
+    }
+    else
     {
-      if( road[road_s].length-car[car_id].situation.car_position >= car[car_id].situation.car_speed)
-      {
-	if(car[car_id].situation.flag==0)
-	  return car[car_id].situation.car_speed; 
-	else
-	  return -1;
-      }
-      else
-      {
-	if(car[car_id].situation.flag==0)
-	  return road[road_s].length-car[car_id].situation.car_position; 
-	else
-	  return -1;
-	
-      }
+      return car[car_id].situation.car_speed;
     }
   }
-  
 }
+
+
 
 void insertSort(int arr[], int n){  
   for(int i = 1;i < n;i++){  
@@ -610,6 +600,7 @@ int Cross_first_car(int cross_id,int road_i)//,int index)//测试  不能通过O
 int roadIndexInCross(int cross_id,int road_id)  //通过cross_id和road_id找到road在cross文件中的下标
 {
   int i = 0;
+  cout <<"roadIndexInCross_id= "<<cross_id<<endl;
   for(i=0;i<4;i++)
   {
     if(cross[cross_id].road_id[i] == road_id)
@@ -626,7 +617,7 @@ int findTheNextRoad(Car & car)    //找到当前车辆下一条要驶入的路id
   {
     if(car.situation.car_pass[i] == car.situation.car_dirction)
     {
-      cout<<"car.situation.car_dirction="<<car.situation.car_dirction<<endl;
+      cout<< "car.situation.car_dirction:"<<car.situation.car_dirction<<endl;
       break;
     }
   }
@@ -640,14 +631,18 @@ int nextOrientation(int cross_id,Car & car)    //得到出当前路口时要转�
   {
     int roadi = car.situation.road_id;
     int roadj = findTheNextRoad(car);
+    cout<<"roadj= "<<roadj<<endl;
     int index_i = roadIndexInCross(cross_id,roadi);
     int index_j = roadIndexInCross(cross_id,roadj);
+    cout<<"index_i:"<<index_i<<endl;
+    cout<<"index_j:"<<index_j<<endl;
     switch ((index_i - index_j + 4) % 4)
     {
-      case 0:break;
+      //     case 0:return -1;break;
       case 1:return 2;
       case 2:return 0;
       case 3:return 1;
+      default:return -1;
     }
   }
 }
@@ -699,7 +694,7 @@ int findTheFirstCar(int roadid,int cross_id)//find the car which has the first o
 
 int whichRoadToSche(int crossid,int roadid,int road_num)//find out which way to scheduling next in this crossing
 {
-  static int pre_roadi=0;
+  cout << "pre_roadid"<<pre_roadID<<endl;
   if(roadid == 0) //roadid=0 means its the first time to call this function
   {
     int min_id;
@@ -707,7 +702,6 @@ int whichRoadToSche(int crossid,int roadid,int road_num)//find out which way to 
     {
       if(cross[crossid].road_id[i]>0)
       {
-	
 	min_id = cross[crossid].road_id[i];
 	break;
       }
@@ -716,44 +710,50 @@ int whichRoadToSche(int crossid,int roadid,int road_num)//find out which way to 
     {
       if(cross[crossid].road_id[i]>0)
 	if(cross[crossid].road_id[i] < min_id)
-	  
 	  min_id = cross[crossid].road_id[i];
     }
     int roadi = road_in_to_i ( min_id , road_num );//通过路的id查找哪条路（这段路）
-    pre_roadi = roadi;
-    return roadi;
+    pre_roadID = roadi;
+    return pre_roadID;
   }
   else if(roadid==-1)
   {
-    int i = 0;
-    int serial_road[4];
-    for(int j=0;j<4;j++)
+    int bigger_id = -1;
+    int dis = 0;
+    //int road_s = road_in_to_i ( cross[crossid].road_id[i] , road_num );
+    for(int i=0;i<4;i++)
     {
-      serial_road[j]=cross[crossid].road_id[j];
-    }
-    insertSort(serial_road, 4);
-    for(int j=0;j<4;j++){
-      serial_road[j]=road_in_to_i (serial_road[j] , road_num );
-    }
-    for(int k = 0;k < 4;k++)
-    {
-      if(serial_road[k] == pre_roadi)
+      int road_s = road_in_to_i ( cross[crossid].road_id[i] , road_num );
+      cout<<"road["<<i<<"] = "<<road_s<<endl;
+      if(road_s >pre_roadID)
       {
-	i = (k + 1) % 4;
-	while(serial_road[i] == -1)
-	{
-	  i = (i + 1) % 4;
-	}
+	dis = road_s  - pre_roadID;
+	bigger_id =road_s ;
 	break;
       }
     }
-    pre_roadi=serial_road[i];
-    return pre_roadi;
+    if(bigger_id == -1)
+      return -1;
+    for(int i=0;i<4;i++)
+    {
+      int road_s = road_in_to_i ( cross[crossid].road_id[i] , road_num );
+      cout<<"road["<<i<<"] = "<<road_s << "  crossid= "<< crossid<<endl;
+      if((( road_s - pre_roadID) < dis) && (( road_s - pre_roadID) > 0))
+      {
+	cout<<"mark0"<<endl;
+	dis =  road_s - pre_roadID;
+	bigger_id =  road_s;
+      }
+    }
+    cout<<"bigger_id= " <<bigger_id<<endl;
+    //int roadi = road_in_to_i ( min_id , road_num );
+    pre_roadID = bigger_id;
+    return pre_roadID;
   }
-  else if(roadid==pre_roadi)
+  else if(roadid > 0)
   {
     //int roadi = road_in_to_i ( pre_roadi , road_num );
-    return pre_roadi;
+    return pre_roadID;
   }
 }
 
@@ -882,39 +882,39 @@ int turning(int turn[],int car_id[],int cross_id,int index,int road_num,int road
 /*    
  *    if((cross[cross_id].road_id[next_road_id]==-1)&&(cross[cross_id].road_id[nnext_road_id]==-1))//没路
  *    {
- *      back_carid= car_id[index];
- *      return back_carid;
+ *    back_carid= car_id[index];
+ *    return back_carid;
  *    }else if(cross[cross_id].road_id[next_road_id]!=-1)
  *    {
- *      if(turn[next_road_id]==0)
- *	{
- *	  car[car_id[index]].situation.flag=0;//等待	
- *	  int roadi = road_in_to_i ( car[car_id[index]].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
- *	  Node * link_i = road[roadi].Cur_Road.Search( car_id[index]); //这部车在链表哪个位置
- *	  link_i->flag=car[car_id[index]].situation.flag;
- *	  back_carid=-1;//car_id[k];
- *	  return back_carid;
- *	} 
+ *    if(turn[next_road_id]==0)
+ *    {
+ *    car[car_id[index]].situation.flag=0;//等待	
+ *    int roadi = road_in_to_i ( car[car_id[index]].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
+ *    Node * link_i = road[roadi].Cur_Road.Search( car_id[index]); //这部车在链表哪个位置
+ *    link_i->flag=car[car_id[index]].situation.flag;
+ *    back_carid=-1;//car_id[k];
+ *    return back_carid;
+ *    } 
  *    }
  *    
  *    
- *      if(turn[nnext_road_id]==1)
- *      {
- *	car[car_id[index]].situation.flag=0;//等待		    
- *	int roadi = road_in_to_i ( car[car_id[index]].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
- *	Node * link_i = road[roadi].Cur_Road.Search( car_id[index]); //这部车在链表哪个位置
- *	link_i->flag=car[car_id[index]].situation.flag;
- *	back_carid=-1;//car_id[k];
- *	return back_carid;
- *      }
- *      else
- *      {
- *	back_carid=car_id[index];
- *	return back_carid;
- *      }
+ *    if(turn[nnext_road_id]==1)
+ *    {
+ *    car[car_id[index]].situation.flag=0;//等待		    
+ *    int roadi = road_in_to_i ( car[car_id[index]].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
+ *    Node * link_i = road[roadi].Cur_Road.Search( car_id[index]); //这部车在链表哪个位置
+ *    link_i->flag=car[car_id[index]].situation.flag;
+ *    back_carid=-1;//car_id[k];
+ *    return back_carid;
+ *    }
+ *    else
+ *    {
+ *    back_carid=car_id[index];
+ *    return back_carid;
+ *    }
  *    
- *  }
- *  }*/
+ *    }
+ *    }*/
 
 
 int end_cross(int cross_id,int road_num)
@@ -950,8 +950,16 @@ int Cross_Sche(int cross_id , int road_num,int T)
   //int update_roadi=0;
   xiayilun: while(end_cross(cross_id,road_num))
   {
+    cout<< " T = " << T << " pre_scheing_road = " << scheing_road << " pre_CrossID: " << cross_id << endl;
     scheing_road=whichRoadToSche(cross_id,scheing_road,road_num);
     cout<< " T = " << T << " scheing_road = " << scheing_road << " CrossID: " << cross_id << endl;
+    if(scheing_road == -1)
+    {
+      cout << "this crossing is finished"  << endl;
+      break;
+    }
+    
+    
     //scheing_road=whichRoadToSche(cross_id,scheing_road,road_num);
     for(int i=0;i<4;i++)
     {
@@ -966,7 +974,6 @@ int Cross_Sche(int cross_id , int road_num,int T)
 	turn[i]=-1;
       else
       {
-	cout<<" car_dirction = "<<car[first_car_i[i]].situation.car_dirction<<endl;
 	turn[i]=nextOrientation(cross_id,car[first_car_i[i]]);
 	cout<<" car_id = "<<first_car_i[i]<<endl;
 	cout<<" road_id = "<<car[first_car_i[i]].situation.road_id<<endl;
@@ -994,7 +1001,7 @@ int car_into_next_road_position(Node * next_car,int channel,int dirction,int &fl
 {
   Node * temp;
   int min_position=10000;
-  flag = 2;
+  flag = 3;
   if(next_car==nullptr)
   {
     return min_position;
@@ -1031,6 +1038,243 @@ int next_road_cari(Node * car,int channel,int minposition,int dirction)
   return car_id;
   
 }
+
+// int cross_car_update(int car_id,int road_num)
+// {
+// 
+//   Node *p;
+//   int car_id_roadi=road_in_to_i(car[car_id].situation.road_id,road_num);//车的道路ID
+//   int data[9];
+//   if(car[car_id].situation.car_pass.size()==1)
+//   {
+//     int delet_car=road[car_id_roadi].Cur_Road.Search_i(car_id);//删除下一个道路的ID号
+//     cout <<"delNODE: "<<car_id<<" car_id_roadi "<<car_id_roadi<<endl;
+//     road[car_id_roadi].Cur_Road.Delete(delet_car);
+//     
+//     //排序遍历
+// //    road_sche();
+//     
+// 
+//     linkinsertSort( road[car_id_roadi].Cur_Road.Head );         
+//     Node *p_l=road[car_id_roadi].Cur_Road.Head;
+//     if(p_l->next != nullptr)
+//     {
+//       p_l=p_l->next;
+//       while(p_l)
+//       {
+// 	update_car_in_cross(p_l->car_id,road_num);
+// 	update_road_inside(p_l->car_id,road_num);
+// 	p_l=p_l->next;       
+//       }
+//     }
+//     car[car_id].situation.flag=-1;
+//     data[0]=car[car_id].situation.flag;						//flag 终止行驶
+//     car[car_id].situation.car_dirction= 0;
+//     data[1]=car[car_id].situation.car_dirction; 					//方向
+//     car[car_id].situation.car_position= 0;
+//     data[2]=car[car_id].situation.car_position; 					//位置
+//     car[car_id].situation.car_channel=0;
+//     data[3]=car[car_id].situation.car_channel;  					//通道
+//     data[4]=car_id;								//ID
+//     car[car_id].situation.car_speed=0;
+//     
+//     data[5]=0;								//速度
+//     data[6]=-2;									//优先级
+//     data[7]=-2;									//转向
+//     data[8]=0;									//移动
+//     pass.clear();
+//     passed.clear();
+//     car[car_id].situation.car_passed.push_back(car[car_id].situation.car_pass.front());//设置已经走过的路径
+//     car[car_id].situation.car_pass.pop_front();					//删除已经走过的路径
+//     
+//     pass=car[car_id].situation.car_pass;						//未来走的节点
+//     
+//     passed=car[car_id].situation.car_passed;					//已经走过的路程
+//     cout <<"car_id="<< car_id <<"car[car_id].situation.car_pass.front="<<car[car_id].situation.car_pass.front()<< "   finished   "<<endl;
+//     return car_id_roadi;
+//     
+//   }
+//   else
+//   {
+//   int next_road_id=road_in_to_i(map3d[car[car_id].situation.car_pass.front()-1][car[car_id].situation.car_pass[1]-1][0],road_num);//查询行驶道路编号
+//   cout<<"map3d= "<<map3d[car[car_id].situation.car_pass.front()-1][car[car_id].situation.car_pass[1]-1][0];
+//   int sele_channel=first_channel(lookfor_road(next_road_id),car[car_id].situation.car_pass[1],//获取下一条路可以通行的道路
+// 				 map3d[car[car_id].situation.car_pass.front()-1][car[car_id].situation.car_pass[1]-1][3]);
+//   cout<<"car_id:"<<car_id<<"sele_channel="<<sele_channel<<endl;
+//   
+//   int car1_length_posotion=road[car_id_roadi].length-car[car_id].situation.car_position;//车在入口前的道路长度-position
+//   int car_V1max=velocity(car_id,car_id_roadi);//在入口前道路1的最大速度
+//   int car_V2max=velocity(car_id,next_road_id);//在入口后第二条道路的最大速度
+//   int carV=min(car_V1max,car_V2max);//车的最大速度
+//   int car_position2=car_into_next_road_position(lookfor_road(next_road_id),sele_channel,car[car_id].situation.car_pass[1]-1);//第二条路的最近的车position
+//   
+//   if(sele_channel==-1)//-1 代表下一个车道没有位置
+//   {
+//     p=road[next_road_id].Cur_Road.Head;
+//     p=p->next;
+//     while(p)//找出下一个车道的所有position = 1的车判断状态
+//     {
+//       if((p->car_position==1)&&(car[car_id].situation.car_pass[1]==p->car_pass.front()))//如果等于1 就进入状态更新
+//       {
+// 	if(car[p->car_id].situation.flag!=-1)//如果存在不终止
+// 	{
+// 	  car[car_id].situation.flag=0;//不能过路口终止
+// 	}else
+// 	{
+// 	  car[car_id].situation.flag=-1;
+// 	  car_data[0]=car[car_id].situation.flag;
+// 	  car[car_id].situation.car_position= road[car_id_roadi].length;
+// 	  car_data[2]=car[car_id].situation.car_position;
+// 	  update_road_inside(car_id,road_num);
+// 	}
+//       }
+//       p=p->next;
+//     }
+//     return -1;
+//   }else// i 代表能够进入到下一个车道
+//   {
+//     if(car_position2>carV-car1_length_posotion)
+//     {
+//       //删除上一条路节点  并添加到下一条路
+//       //carV-car1_length_posotion;//加入下一条链的位置
+// 	 int delet_car=road[car_id_roadi].Cur_Road.Search_i(car_id);//删除下一个道路的ID号
+// 	 cout <<"delNODE: "<<car_id<<" car_id_roadi "<<car_id_roadi<<endl;
+// 	 road[car_id_roadi].Cur_Road.Delete(delet_car);
+// 	 
+// 	 
+// 	 linkinsertSort( road[car_id_roadi].Cur_Road.Head );         
+// 	 Node *p_l=road[car_id_roadi].Cur_Road.Head;
+// 	 if(p_l->next != nullptr)
+// 	 {
+// 	   p_l=p_l->next;
+// 	   while(p_l)
+// 	   {
+// 	     update_car_in_cross(p_l->car_id,road_num);
+// 	     update_road_inside(p_l->car_id,road_num);
+// 	     p_l=p_l->next;       
+// 	   }
+// 	 }
+// 	 
+// 	 
+// 	  /*******************************更新数据*********************************/
+// 	 car[car_id].situation.flag=-1;
+// 	 data[0]=car[car_id].situation.flag;						//flag 终止行驶
+// 	 car[car_id].situation.car_dirction= car[car_id].situation.car_pass[1];
+// 	 data[1]=car[car_id].situation.car_dirction; 					//方向
+// 	 car[car_id].situation.car_position= carV-car1_length_posotion;;
+// 	 data[2]=car[car_id].situation.car_position; 					//位置
+// 	 car[car_id].situation.car_channel=sele_channel;
+// 	 data[3]=car[car_id].situation.car_channel;  					//通道
+// 	 data[4]=car_id;								//ID
+// 	 car[car_id].situation.car_speed=car_V2max;
+// 	 
+// 	 data[5]=car_V2max;								//速度
+// 	 data[6]=-2;									//优先级
+// 	 data[7]=-2;									//转向
+// 	 data[8]=0;									//移动
+// 	 pass.clear();
+// 	 passed.clear();
+// 	 car[car_id].situation.car_passed.push_back(car[car_id].situation.car_pass.front());//设置已经走过的路径
+// 	 car[car_id].situation.car_pass.pop_front();					//删除已经走过的路径
+// 	 
+// 	 pass=car[car_id].situation.car_pass;						//未来走的节点
+// 	 passed=car[car_id].situation.car_passed;					//已经走过的路程
+// 	 car[car_id].situation.road_id=map3d[car[car_id].situation.car_passed.back()-1][car[car_id].situation.car_pass.front()-1][0];
+// 	 /**********************************************************************/
+// 	 road[next_road_id].Cur_Road.AddNode(data,passed,pass);  //加入链表
+// 	 
+// 	 cout <<"ADDNODE: "<<car_id<<" next_road_id "<<next_road_id<<endl;
+// 	 /*linkinsertSort( road[car_id_roadi].Cur_Road.Head );
+// 	 Node *p=road[car_id_roadi].Cur_Road.Head;
+// 	 if(p->next != NULL)
+// 	 {
+// 	   p=p->next;
+// 	   update_car_in_cross(p->car_id,road_num);
+// 	   update_road_inside(p->car_id,road_num);
+// 	 }*/
+// 	 return car_id_roadi;
+//       //通过最大速度
+//     }
+//     else
+//     {
+//       //判断前车状态
+//       if(car[next_road_cari(lookfor_road(next_road_id),sele_channel,car_position2,car[car_id].situation.car_pass[1])].situation.flag==-1){
+// 	int delet_car=road[car_id_roadi].Cur_Road.Search_i(next_road_cari(lookfor_road(car_id_roadi),sele_channel,car_position2,car[car_id].situation.car_pass[1]));//删除下一个道路的ID号
+// 	road[car_id_roadi].Cur_Road.Delete(delet_car);
+// 	  
+// 	 //排序遍历
+// 	// road_sche();
+// 	linkinsertSort( road[car_id_roadi].Cur_Road.Head );         
+// 	Node *p_l=road[car_id_roadi].Cur_Road.Head;
+// 	 if(p_l->next != nullptr)
+// 	 {
+// 	   p_l=p_l->next;
+// 	   while(p_l)
+// 	   {
+// 	     update_car_in_cross(p_l->car_id,road_num);
+// 	     update_road_inside(p_l->car_id,road_num);
+// 	     p_l=p_l->next;       
+// 	   }
+// 	 }
+// 	 
+// 	 
+// 	 cout <<"delNODE: "<<car_id<<" car_id_roadi "<<car_id_roadi<<endl;
+// 	 /*******************************更新数据*********************************/
+// 	 car[car_id].situation.flag=-1;
+// 	 data[0]=car[car_id].situation.flag;						//flag 终止行驶
+// 	 car[car_id].situation.car_dirction= car[car_id].situation.car_pass[1];
+// 	 data[1]=car[car_id].situation.car_dirction; 					//方向
+// 	 car[car_id].situation.car_position=car_position2-1;
+// 	 data[2]=car[car_id].situation.car_position; 					//位置
+// 	 car[car_id].situation.car_channel=sele_channel;
+// 	 data[3]=car[car_id].situation.car_channel;  					//通道
+// 	 data[4]=car_id;								//ID
+// 	 car[car_id].situation.car_speed=car_V2max;
+// 	 data[5]=car_V2max;								//速度
+// 	 data[6]=-2;									//优先级
+// 	 data[7]=-2;									//转向
+// 	 data[8]=0;									//移动
+// 	 pass.clear();
+// 	 passed.clear();
+// 	 car[car_id].situation.car_passed.push_back(car[car_id].situation.car_pass.front());//设置已经走过的路径
+// 	 car[car_id].situation.car_pass.pop_front();					//删除已经走过的路径
+// 	
+// 	 pass=car[car_id].situation.car_pass;						//未来走的节点
+// 	 passed=car[car_id].situation.car_passed;					//已经走过的路程	
+// 	 car[car_id].situation.road_id=map3d[car[car_id].situation.car_passed.back()-1][car[car_id].situation.car_pass.front()-1][0];
+// 	 /**********************************************************************/
+// 	 road[next_road_id].Cur_Road.AddNode(data,passed,pass);  //加入链表
+// 	//行驶Vmax-1 car_position2-1
+// 	 cout <<"ADDNODE: "<<car_id<<" next_road_id "<<next_road_id<<endl;
+// 	 
+// 	/* linkinsertSort( road[car_id_roadi].Cur_Road.Head );
+// 	  Node *p=road[car_id_roadi].Cur_Road.Head;
+// 	  if(p->next != NULL)
+// 	  {
+// 	    p=p->next;
+// 	    update_car_in_cross(p->car_id,road_num);
+// 	    update_road_inside(p->car_id,road_num);
+// 	  }*/
+// 	  return car_id_roadi;
+//       }
+//       if(car[next_road_cari(lookfor_road(next_road_id),sele_channel,car_position2,car[car_id].situation.car_pass[1])].situation.flag==0)
+//       {
+// 		
+// 	//更新路的状态信息
+// 	car[car_id].situation.flag=0;
+// 	
+// 	int roadi = road_in_to_i ( car[car_id].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
+// 	Node * link_i = road[roadi].Cur_Road.Search( car_id ); //这部车在链表哪个位置
+// 	link_i->flag=car[car_id].situation.flag;
+// 	
+// 	return -1;
+//       }
+//     }
+//   }
+//   }
+// }
+
+
 int cross_car_update(int car_id, int road_num)
 {
   cout << " car_id= " << car_id << endl;
@@ -1040,6 +1284,7 @@ int cross_car_update(int car_id, int road_num)
   int data[9];
   if (car[car_id].situation.car_pass.size() == 1)
   {
+    cout << " MARK=00 " << endl;
     int delet_car = road[car_id_roadi].Cur_Road.Search_i(car_id);//删除下一个道路的ID号
     cout << "delNODE: " << car_id << " car_id_roadi " << car_id_roadi << endl;
     road[car_id_roadi].Cur_Road.Delete(delet_car);
@@ -1049,11 +1294,11 @@ int cross_car_update(int car_id, int road_num)
     
     car[car_id].situation.flag = -1;
     data[0] = car[car_id].situation.flag;						//flag 终止行驶
-    car[car_id].situation.car_dirction = 0;
+    car[car_id].situation.car_dirction = car[car_id].situation.car_dirction;
     data[1] = car[car_id].situation.car_dirction; 					//方向
     car[car_id].situation.car_position = 0;
     data[2] = car[car_id].situation.car_position; 					//位置
-    car[car_id].situation.car_channel = 0;
+    car[car_id].situation.car_channel = car[car_id].situation.car_channel;
     data[3] = car[car_id].situation.car_channel;  					//通道
     data[4] = car_id;								//ID
     car[car_id].situation.car_speed = 0;
@@ -1080,7 +1325,7 @@ int cross_car_update(int car_id, int road_num)
       p_l = p_l->next;
       while (p_l)
       {
-	if((p_l->car_dirction==car[car_id].situation.car_passed.back())&&(p_l->flag==0))
+	if((p_l->car_dirction==car[car_id].situation.car_passed.back())&&(p_l->flag==0)&&(p_l->car_channel==car[car_id].situation.car_channel))
 	{
 	  update_car_in_cross(p_l->car_id, road_num);
 	  update_road_inside(p_l->car_id, road_num);
@@ -1109,43 +1354,64 @@ int cross_car_update(int car_id, int road_num)
     
     if (sele_channel == -1)//-1 代表下一个车道没有位置
     {
+      cout << " MARK=XX " << endl;
+      
       p = road[next_road_id].Cur_Road.Head;
       p = p->next;
+      int wait_flag = 0;
       while (p)//找出下一个车道的所有position = 1的车判断状态
       {
 	if ((p->car_position == 1) && (car[car_id].situation.car_pass[1] == p->car_pass.front()))//如果等于1 就进入状态更新
 	{
 	  if (car[p->car_id].situation.flag != -1)//如果存在不终止
 	  {
-	    car[car_id].situation.flag = 0;//不能过路口终止
-	    //更新路的状态
-	    int roadi = road_in_to_i(car[car_id].situation.road_id, road_num);//通过路的id查找哪条路（这段路）
-	    Node * link_i = road[roadi].Cur_Road.Search(car_id); //这部车在链表哪个位置
-	    link_i->flag = car[car_id].situation.flag;
-	    cout<<"mark00"<<endl;
+	    wait_flag = 1;
 	    break;
-	  }
-	  else
-	  {
-	    car[car_id].situation.flag = -1;
-	    //car_data[0] = car[car_id].situation.flag;
-	    car[car_id].situation.car_position = road[car_id_roadi].length;
-	    // car_data[2] = car[car_id].situation.car_position;
-	    
-	    int roadi = road_in_to_i ( car[car_id].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
-	    Node * link_i = road[roadi].Cur_Road.Search( car_id ); //这部车在链表哪个位置
-	    link_i->flag=car[car_id].situation.flag;
-	    link_i->car_position=car[car_id].situation.car_position;
-	    cout<<"mark01"<<endl;
-	    // update_road_inside(car_id, road_num);
 	  }
 	}
 	p = p->next;
+      }
+      if(wait_flag == 1)
+      {
+	cout << " MARK=01 " << endl;
+	car[car_id].situation.flag = 0;//不能过路口终止
+	//更新路的状态
+	int roadi = road_in_to_i(car[car_id].situation.road_id, road_num);//通过路的id查找哪条路（这段路）
+	Node * link_i = road[roadi].Cur_Road.Search(car_id); //这部车在链表哪个位置
+	link_i->flag = car[car_id].situation.flag;
+      }
+      else
+      {
+	cout << " MARK=02 " << endl;
+	car[car_id].situation.flag = -1;
+	//car_data[0] = car[car_id].situation.flag;
+	car[car_id].situation.car_position = road[car_id_roadi].length;
+	// car_data[2] = car[car_id].situation.car_position;
+	int roadi = road_in_to_i ( car[car_id].situation.road_id , road_num );//通过路的id查找哪条路（这段路）
+	Node * link_i = road[roadi].Cur_Road.Search( car_id ); //这部车在链表哪个位置
+	link_i->flag=car[car_id].situation.flag;
+	link_i->car_position=car[car_id].situation.car_position;
+	linkinsertSort(road[car_id_roadi].Cur_Road.Head);
+	Node *p_l = road[car_id_roadi].Cur_Road.Head;
+	if (p_l->next != nullptr)
+	{
+	  p_l = p_l->next;
+	  while (p_l)
+	  {
+	    if((p_l->car_dirction==car[car_id].situation.car_passed.back())&&(p_l->flag==0)&&(p_l->car_channel==car[car_id].situation.car_channel))
+	    {
+	      update_car_in_cross(p_l->car_id, road_num);
+	      update_road_inside(p_l->car_id, road_num);
+	    }
+	    p_l = p_l->next;
+	  }
+	}
       }
       return -1;
     }
     else// i 代表能够进入到下一个车道
     {
+      cout << " MARK=AA " << endl;
       if (car_V1max>car1_length_posotion)
       {
 	if(car_V2max>car1_length_posotion)
@@ -1154,22 +1420,38 @@ int cross_car_update(int car_id, int road_num)
 	  {
 	    if(next_car_flag==0)
 	    {
+	      cout << " MARK=03 " << endl;
 	      //更新路的状态信息
 	      car[car_id].situation.flag = 0;
 	      int roadi = road_in_to_i(car[car_id].situation.road_id, road_num);//通过路的id查找哪条路（这段路）
 	      Node * link_i = road[roadi].Cur_Road.Search(car_id); //这部车在链表哪个位置
 	      link_i->flag = car[car_id].situation.flag;
-	      cout<<"mark02"<<endl;
 	      return -1;
 	    }
-	    else if(next_car_flag==2)
+	    else if(next_car_flag==3)
 	    {
+	      cout << " MARK=04 " << endl;
 	      //删除上一条路节点  并添加到下一条路
 	      int delet_car = road[car_id_roadi].Cur_Road.Search_i(car_id);//删除下一个道路的ID号
 	      cout << "delNODE: " << car_id << " car_id_roadi " << car_id_roadi << endl;
 	      road[car_id_roadi].Cur_Road.Delete(delet_car);
 	      
-	      
+	      linkinsertSort(road[car_id_roadi].Cur_Road.Head);
+	      Node *p_l = road[car_id_roadi].Cur_Road.Head;
+	      if (p_l->next != nullptr)
+	      {
+		p_l = p_l->next;
+		while (p_l)
+		{
+		  if((p_l->car_dirction==car[car_id].situation.car_dirction)&&(p_l->flag==0)&&(p_l->car_channel==car[car_id].situation.car_channel))
+		  {
+		    cout << " MARK=05 " << endl;
+		    update_car_in_cross(p_l->car_id, road_num);
+		    update_road_inside(p_l->car_id, road_num);
+		  }
+		  p_l = p_l->next;
+		}
+	      }
 	      /*******************************更新数据*********************************/
 	      car[car_id].situation.flag = -1;
 	      data[0] = car[car_id].situation.flag;						//flag 终止行驶
@@ -1196,6 +1478,18 @@ int cross_car_update(int car_id, int road_num)
 	      car[car_id].situation.road_id = map3d[car[car_id].situation.car_passed.back() - 1][car[car_id].situation.car_pass.front() - 1][0];
 	      /**********************************************************************/
 	      road[next_road_id].Cur_Road.AddNode(data, passed, pass);  //加入链表
+	      
+	      cout << "ADDNODE: " << car_id << " next_road_id " << next_road_id << endl;
+	      return car_id_roadi;
+	      //通过最大速度
+	    }
+	    else
+	    {
+	      cout << " MARK=06 " << endl;
+	      //删除上一条路节点  并添加到下一条路
+	      int delet_car = road[car_id_roadi].Cur_Road.Search_i(car_id);//删除下一个道路的ID号
+	      cout << "delNODE: " << car_id << " car_id_roadi " << car_id_roadi << endl;
+	      road[car_id_roadi].Cur_Road.Delete(delet_car);
 	      linkinsertSort(road[car_id_roadi].Cur_Road.Head);
 	      Node *p_l = road[car_id_roadi].Cur_Road.Head;
 	      if (p_l->next != nullptr)
@@ -1203,7 +1497,7 @@ int cross_car_update(int car_id, int road_num)
 		p_l = p_l->next;
 		while (p_l)
 		{
-		  if((p_l->car_dirction==car[car_id].situation.car_passed.back())&&(p_l->flag==0))
+		  if((p_l->car_dirction==car[car_id].situation.car_dirction)&&(p_l->flag==0)&&(p_l->car_channel==car[car_id].situation.car_channel))
 		  {
 		    update_car_in_cross(p_l->car_id, road_num);
 		    update_road_inside(p_l->car_id, road_num);
@@ -1211,17 +1505,6 @@ int cross_car_update(int car_id, int road_num)
 		  p_l = p_l->next;
 		}
 	      }
-	      cout << "ADDNODE: " << car_id << " next_road_id " << next_road_id << endl;
-	      return car_id_roadi;
-	      //通过最大速度
-	    }
-	    else
-	    {
-	      //删除上一条路节点  并添加到下一条路
-	      int delet_car = road[car_id_roadi].Cur_Road.Search_i(car_id);//删除下一个道路的ID号
-	      cout << "delNODE: " << car_id << " car_id_roadi " << car_id_roadi << endl;
-	      road[car_id_roadi].Cur_Road.Delete(delet_car);
-	      
 	      /*******************************更新数据*********************************/
 	      car[car_id].situation.flag = -1;
 	      data[0] = car[car_id].situation.flag;						//flag 终止行驶
@@ -1248,21 +1531,7 @@ int cross_car_update(int car_id, int road_num)
 	      car[car_id].situation.road_id = map3d[car[car_id].situation.car_passed.back() - 1][car[car_id].situation.car_pass.front() - 1][0];
 	      /**********************************************************************/
 	      road[next_road_id].Cur_Road.AddNode(data, passed, pass);  //加入链表
-	      linkinsertSort(road[car_id_roadi].Cur_Road.Head);
-	      Node *p_l = road[car_id_roadi].Cur_Road.Head;
-	      if (p_l->next != nullptr)
-	      {
-		p_l = p_l->next;
-		while (p_l)
-		{
-		  if((p_l->car_dirction==car[car_id].situation.car_passed.back())&&(p_l->flag==0))
-		  {
-		    update_car_in_cross(p_l->car_id, road_num);
-		    update_road_inside(p_l->car_id, road_num);
-		  }
-		  p_l = p_l->next;
-		}
-	      }
+	      
 	      cout << "ADDNODE: " << car_id << " next_road_id " << next_road_id << endl;
 	      return car_id_roadi;
 	      //通过最大速度
@@ -1270,11 +1539,26 @@ int cross_car_update(int car_id, int road_num)
 	  }
 	  else
 	  {
+	    cout << " MARK=07 " << endl;
 	    //删除上一条路节点  并添加到下一条路
 	    int delet_car = road[car_id_roadi].Cur_Road.Search_i(car_id);//删除下一个道路的ID号
 	    cout << "delNODE: " << car_id << " car_id_roadi " << car_id_roadi << endl;
 	    road[car_id_roadi].Cur_Road.Delete(delet_car);
-	    
+	    linkinsertSort(road[car_id_roadi].Cur_Road.Head);
+	    Node *p_l = road[car_id_roadi].Cur_Road.Head;
+	    if (p_l->next != nullptr)
+	    {
+	      p_l = p_l->next;
+	      while (p_l)
+	      {
+		if((p_l->car_dirction==car[car_id].situation.car_dirction)&&(p_l->flag==0)&&(p_l->car_channel==car[car_id].situation.car_channel))
+		{
+		  update_car_in_cross(p_l->car_id, road_num);
+		  update_road_inside(p_l->car_id, road_num);
+		}
+		p_l = p_l->next;
+	      }
+	    }
 	    /*******************************更新数据*********************************/
 	    car[car_id].situation.flag = -1;
 	    data[0] = car[car_id].situation.flag;						//flag 终止行驶
@@ -1300,41 +1584,38 @@ int cross_car_update(int car_id, int road_num)
 	    passed = car[car_id].situation.car_passed;					//已经走过的路程
 	    car[car_id].situation.road_id = map3d[car[car_id].situation.car_passed.back() - 1][car[car_id].situation.car_pass.front() - 1][0];
 	    road[next_road_id].Cur_Road.AddNode(data, passed, pass);  //加入链表
-	    linkinsertSort(road[car_id_roadi].Cur_Road.Head);
-	    Node *p_l = road[car_id_roadi].Cur_Road.Head;
-	    if (p_l->next != nullptr)
-	    {
-	      p_l = p_l->next;
-	      while (p_l)
-	      {
-		if((p_l->car_dirction==car[car_id].situation.car_passed.back())&&(p_l->flag==0))
-		{
-		  update_car_in_cross(p_l->car_id, road_num);
-		  update_road_inside(p_l->car_id, road_num);
-		}
-		p_l = p_l->next;
-	      }
-	    }
+	    
 	    cout << "ADDNODE: " << car_id << " next_road_id " << next_road_id << endl;
-	    
-	    
-	    return car_id_roadi;
-	    //通过最大速度
+	    return car_id_roadi;//通过最大速度
 	  }
 	}
 	else
 	{
+	  cout << " MARK=08 " << endl;
+	  linkinsertSort(road[car_id_roadi].Cur_Road.Head);
+	  Node *p = road[car_id_roadi].Cur_Road.Head;
+	  if (p->next != NULL)
+	  {
+	    
+	    if((p->car_dirction==car[car_id].situation.car_dirction)&&(p->flag==0)&&(p->car_channel==car[car_id].situation.car_channel))
+	    {
+	      update_car_in_cross(p->car_id, road_num);
+	      update_road_inside(p->car_id, road_num);
+	    }
+	    p = p->next;
+	  }
 	  /*******************************更新数据*********************************/
 	  car[car_id].situation.flag = -1;
 	  data[0] = car[car_id].situation.flag;						//flag 终止行驶
-	  //car[car_id].situation.car_dirction = car[car_id].situation.car_pass[1];
+	  // car[car_id].situation.car_dirction = car[car_id].situation.car_pass[1];
 	  data[1] = car[car_id].situation.car_dirction; 					//方向
 	  car[car_id].situation.car_position = road[car_id_roadi].length;
 	  data[2] = car[car_id].situation.car_position; 					//位置
-	  car[car_id].situation.car_channel = sele_channel;
+	  //car[car_id].situation.car_channel = sele_channel;
 	  data[3] = car[car_id].situation.car_channel;  					//通道
 	  data[4] = car_id;								//ID
 	  car[car_id].situation.car_speed = car_V1max;
+	  
 	  data[5] = car_V1max;								//速度
 	  data[6] = -2;									//优先级
 	  data[7] = -2;									//转向
@@ -1343,24 +1624,23 @@ int cross_car_update(int car_id, int road_num)
 	  //passed.clear();
 	  car[car_id].situation.road_id = map3d[car[car_id].situation.car_passed.back() - 1][car[car_id].situation.car_pass.front() - 1][0];
 	  /**********************************************************************/
-	  linkinsertSort(road[car_id_roadi].Cur_Road.Head);
-	  Node *p = road[car_id_roadi].Cur_Road.Head;
-	  if (p->next != NULL)
-	  {
-	    
-	    if((p->car_dirction==car[car_id].situation.car_passed.back())&&(p->flag==0))
-	    {
-	      update_car_in_cross(p->car_id, road_num);
-	      update_road_inside(p->car_id, road_num);
-	    }
-	    p = p->next;
-	  }
-	  cout<<"mark03"<<endl;
+	  
 	  return car_id_roadi;
 	}
       }
       else
       {
+	cout << " MARK=09 " << endl;
+	linkinsertSort(road[car_id_roadi].Cur_Road.Head);
+	Node *p = road[car_id_roadi].Cur_Road.Head;
+	if (p->next != NULL)
+	{
+	  if((p->car_dirction==car[car_id].situation.car_dirction)&&(p->flag==0)&&(p->car_channel==car[car_id].situation.car_channel))	  {
+	    update_car_in_cross(p->car_id, road_num);
+	    update_road_inside(p->car_id, road_num);
+	  }
+	  p = p->next;
+	}
 	/*******************************更新数据*********************************/
 	car[car_id].situation.flag = -1;
 	data[0] = car[car_id].situation.flag;						//flag 终止行驶
@@ -1368,7 +1648,7 @@ int cross_car_update(int car_id, int road_num)
 	data[1] = car[car_id].situation.car_dirction; 					//方向
 	car[car_id].situation.car_position = car[car_id].situation.car_position+car_V1max;
 	data[2] = car[car_id].situation.car_position; 					//位置
-	car[car_id].situation.car_channel = sele_channel;
+	//car[car_id].situation.car_channel = sele_channel;
 	data[3] = car[car_id].situation.car_channel;  					//通道
 	data[4] = car_id;								//ID
 	car[car_id].situation.car_speed = car_V1max;
@@ -1381,19 +1661,7 @@ int cross_car_update(int car_id, int road_num)
 	//passed.clear();
 	car[car_id].situation.road_id = map3d[car[car_id].situation.car_passed.back() - 1][car[car_id].situation.car_pass.front() - 1][0];
 	/**********************************************************************/
-	linkinsertSort(road[car_id_roadi].Cur_Road.Head);
-	Node *p = road[car_id_roadi].Cur_Road.Head;
-	if (p->next != NULL)
-	{
-	  
-	  if((p->car_dirction==car[car_id].situation.car_passed.back())&&(p->flag==0))
-	  {
-	    update_car_in_cross(p->car_id, road_num);
-	    update_road_inside(p->car_id, road_num);
-	  }
-	  p = p->next;
-	}
-	cout<<"mark04"<<"   car_V1max="<<car_V1max<<"   car1_length_posotion"<<car1_length_posotion<<endl;
+	
 	return car_id_roadi;
       }  
     }
@@ -1442,8 +1710,8 @@ int car_passdistence(int channel,int car_id,Node * car_link,int road_s ,int dirc
     
     //int vmax=car[car_id].situation.car_speed;
     int vmax=velocity(car_id,road_s);  
-    int thiscar_s=car[car_id].situation.car_position;
-    if(car_link==NULL)
+    int thiscar_s=0;//car[car_id].situation.car_position
+    if(car_link == nullptr)
     {
       return vmax;
     }
@@ -1470,7 +1738,7 @@ int car_passdistence(int channel,int car_id,Node * car_link,int road_s ,int dirc
       if((car_s==0||temp->car_position<car_s)&&temp->car_channel==channel && temp->car_dirction == dirction)
       {
 	car_s=temp->car_position;
-	cari=temp->is_moved;
+	cari=temp->flag;
       }
       
       temp=temp->next;
@@ -1481,7 +1749,7 @@ int car_passdistence(int channel,int car_id,Node * car_link,int road_s ,int dirc
       return vmax;
     else if(vmax >= (car_s - thiscar_s))
     {
-      if(cari)
+      if(cari == -1)
 	return car_s - thiscar_s - 1;
       else
 	return -1;
@@ -1549,6 +1817,7 @@ void update_car_in_cross(int car_i,int road_num)
     }
     car_data[0]=car[car_i].situation.flag;
   }
+  linkinsertSort( road[roadi].Cur_Road.Head );
 }
 
 
@@ -1695,7 +1964,9 @@ void car_start_to_road(int cross_i ,  int out , vector<vector<int>>  car_samesta
       int road_s=0;
       road_s=road_in_to_i(map3d[cross_i][car[*ite_time].situation.car_pass[1]-1][0],road_num);//查询行驶道路编号
       int out_channel=first_channel(lookfor_road(road_s),car[*ite_time].situation.car_pass[1],map3d[cross_i][car[*ite_time].situation.car_pass[1]-1][3]);
+      cout<<"out_channel="<<out_channel<<endl;
       int out_dist=car_passdistence(out_channel,*ite_time,lookfor_road(road_s),road_s ,  car[*ite_time].situation.car_pass[1]);
+      cout<<"out_dist="<<out_dist<<endl;
       if(out_dist >0)
       {
 	update_car_in_road(*ite_time,road_num,out_channel,out_dist);
@@ -1710,6 +1981,16 @@ void car_start_to_road(int cross_i ,  int out , vector<vector<int>>  car_samesta
 
 
 
+int count_car(int road_num)
+{
+  int car_count=0;
+  for(int k=0;k<road_num;k++)//道路调度
+  {
+    car_count=(road[k].Cur_Road.ListLength()-1)+car_count;   
+  }  
+  cout<<"count: "<<car_count<<endl;
+  return car_count;
+}
 
 
 
@@ -1768,8 +2049,7 @@ int main(int argc, char *argv[])
 	     &(road[num].start),
 	     &(road[num].end),
 	     &(road[num].flag_bothway));
-      
-      
+       
       num++;
     }
   }
@@ -1930,9 +2210,7 @@ int main(int argc, char *argv[])
 	path[i].resize(a2);//定义数组宽(第2位)
 	//for (int j = 0; j<a2; j++)
 	//path[i][j].resize(a3);//定义数组高(第3位)
-      }
-      
-      
+      } 
       //creater car line
       //vector<int> a;
       
@@ -1984,7 +2262,7 @@ int main(int argc, char *argv[])
       vector<int> road_channel;
       int cross_car[4];
       int T=0;
-      
+      int cross_a=0;
       
       /*	
        *	int x=lookfor_cross(6,car_samestartid);
@@ -1995,10 +2273,11 @@ int main(int argc, char *argv[])
        *	cout<<"out_car: "<<out_car<<endl;
        */	
       
-      
+        
       while(end_sys(car_num) || T == 0)
       {
 	T++;    
+	update_start(road_num);//更新路上的车的flag
 	
 	for(int k=0;k<road_num;k++)//每个链表排序
 	{
@@ -2015,7 +2294,7 @@ int main(int argc, char *argv[])
 	    {
 	      update_car_in_cross(p_l->car_id,road_num);
 	      update_road_inside(p_l->car_id,road_num);
-	      p_l=p_l->next;       
+	      p_l=p_l->next;
 	    }
 	  }
 	}
@@ -2026,28 +2305,25 @@ int main(int argc, char *argv[])
 	  {
 	    Cross_Sche(i , road_num , T);
 	  }
-	  //	  cout<<"hello      "<<endl;
 	}
-	update_start(road_num);//更新路上的车的flag
-	
-	
 	car_start_flag(T ,car_num);//判断那一辆车可以出发
-	if(T%2==0)
+	
+	for(cross_a=0;cross_a<cross_num;cross_a++)
 	{
-	  for(int a=0;a<cross_num;a++)
-	    car_start_to_road(a ,1,car_samestartid, road_num) ; //车辆出车库
+	  if(count_car(road_num)<500)
+	    car_start_to_road(cross_a ,1,car_samestartid, road_num) ; //车辆出车库		
 	}
+	/*if(cross_a==cross_num)
+	 *  cross_a=0;*/
+	
 	cout<<" now T:"<<T<<endl;
 	
       }
       
       cout<<"finish T:"<<T<<endl;
       cout<<"输出结束"<<endl;
-      
-      
-      
+       
       // TODO:write output file
       
       return 0; 
 }
-

@@ -4,7 +4,7 @@ SET(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 SET(CMAKE_DEPENDS_CHECK_CXX
-  "/home/zt/work/zw/Code2019/CodeCraft2019/CodeCraft-2019.cpp" "/home/zt/work/zw/Code2019/CodeCraft2019/build/CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o"
+  "/home/zt/Codes/Code2019/CodeCraft2019/CodeCraft-2019.cpp" "/home/zt/Codes/Code2019/CodeCraft2019/build/CMakeFiles/CodeCraft-2019.dir/CodeCraft-2019.cpp.o"
   )
 SET(CMAKE_CXX_COMPILER_ID "GNU")
 
