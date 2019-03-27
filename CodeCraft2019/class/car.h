@@ -28,6 +28,7 @@ typedef struct Car_Situation
 			
     int is_moved;	//0 move 
 			//1 no move
+    int actual_start_time;
 };
 //你的代码写在这里
 class Car{

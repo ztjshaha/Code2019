@@ -52,6 +52,7 @@ struct Node {
 			
         int is_moved;	//0 move 
 			//1 no move
+			
 };
  
 #endif //TEST1_NODE_H
