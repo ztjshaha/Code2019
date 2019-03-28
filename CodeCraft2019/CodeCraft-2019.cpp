@@ -39,6 +39,9 @@ vector<vector<int>> road_length;
 vector<vector<vector<int>>> path;
 vector<vector<vector<int>>>map3d;
 vector<vector<vector<int>>> map3d_copy;
+
+
+
 int sys_clk=1;
 int pre_roadID = -1;
 
@@ -494,6 +497,21 @@ int road_sche(Node * car_link,int car_id,int road_num)
   }
 }
 
+
+void float_insertSort(float arr[], int n){  
+  for(int i = 1;i < n;i++){  
+    float temp = arr[i];  
+    int j = i - 1;  
+    while(temp < arr[j]){  
+      arr[j+1] = arr[j];  
+      j--;  
+      if(j == -1){  
+	break;  
+      }  
+    }  
+    arr[j+1] = temp;  
+  }  
+} 
 
 
 void insertSort(int arr[], int n){  
@@ -1323,7 +1341,7 @@ int cross_car_update(int car_id, int road_num)
     pass = car[car_id].situation.car_pass;						//未来走的节点  
     passed = car[car_id].situation.car_passed;					//已经走过的路程
     cout << "car_id=" << car_id << "   finished   " << endl;
-
+    
     return car_id_roadi;
     
   }
@@ -1340,7 +1358,7 @@ int cross_car_update(int car_id, int road_num)
     int car_V2max = velocity(car_id, next_road_id);//在入口后第二条道路的最大速度
     //int carV = min(car_V1max, car_V2max);//车的最大速度
     int next_car_flag=-1;
-     cout<<car_id<<"    "<<next_road_id;
+    cout<<car_id<<"    "<<next_road_id;
     int car_position2 = car_into_next_road_position(lookfor_road(next_road_id), sele_channel, car[car_id].situation.car_pass[1],next_car_flag,car_id);//第二条路的最近的车position
     if (sele_channel == -1)//-1 代表下一个车道没有位置
     {
@@ -1727,7 +1745,7 @@ int car_passdistence(int channel,int car_id,Node * car_link,int road_s ,int dirc
       {
 	cout <<  "car_id="<<car_id <<"mark04"<<endl;
 	return -1;
-    
+	
       }
     }
   }
@@ -1802,7 +1820,7 @@ void Dijkstra(int cross_num)//,vector<int>& path[cross_num][cross_num])
 {
   int dis[cross_num][cross_num];        //存储源点到各个顶点的最短路径
   //vector<int> path[cross_num][cross_num];
- 
+  
   for (int i = 0; i < cross_num; i++) 
   {
     for (int j = 0; j < cross_num; j++)              //初始化
@@ -1949,6 +1967,7 @@ void car_start_to_road(int cross_i ,  int out , vector<vector<int>>  car_samesta
 	update_car_in_road(*ite_time,road_num,out_channel,out_dist,T);
 	update_road_in(road_s);
 	out--;
+	out_car++;
       }
     }
     if(out == 0)
@@ -1974,70 +1993,88 @@ void reload_Dijkstra(int cross_num ,int car_num, int del_start,int del_end,int c
 {
   
   map3d_copy=map3d;
-
+  
   map3d_copy[del_start-1][del_end-1][1]=MAX;
   map3d_copy[del_end-1][del_start-1][1]=MAX;
   for(int i = 0; i < cross_num; i++)
     for (int j = 0; j < cross_num; j++)
-	  road_length[i][j]=-1;
-  for(int i = 0; i < cross_num; i++)
-    for (int j = 0; j < cross_num; j++)
-      path[i][j].clear();
-  
-  for (int i = 0; i < cross_num; i++)
-  {
-    for (int j = 0; j < cross_num; j++)
-    {   
-      if(((i!=j)&&(map3d_copy[i][j][1]==0)))
+      road_length[i][j]=-1;
+    for(int i = 0; i < cross_num; i++)
+      for (int j = 0; j < cross_num; j++)
+	path[i][j].clear();
+      
+      for (int i = 0; i < cross_num; i++)
       {
-	road_length[i][j]=MAX;	
-      }
-      else
+	for (int j = 0; j < cross_num; j++)
+	{   
+	  if(((i!=j)&&(map3d_copy[i][j][1]==0)))
+	  {
+	    road_length[i][j]=MAX;	
+	  }
+	  else
+	  {
+	    road_length[i][j]=map3d_copy[i][j][1];
+	  }
+	}
+      }    
+      
+      for (int i = 0; i < cross_num; i++)
       {
-	road_length[i][j]=map3d_copy[i][j][1];
+	for (int j = 0; j < cross_num; j++)
+	{
+	  cout<<road_length[i][j]<<" ";
+	  if(j==(cross_num-1))
+	    cout<<endl;
+	  // a[k][j][i] = map3d[i][j][k];
+	}
       }
-    }
-  }    
-  
-  for (int i = 0; i < cross_num; i++)
+      
+      Dijkstra(cross_num);
+}
+
+float cross_car_num(int cross_id,int road_num)
+{
+  float cross_weight[4];
+  int next_car_num=0;
+  int roadnum=0;
+  float weight=0.00;
+  for(int i=0;i<4;i++)
   {
-    for (int j = 0; j < cross_num; j++)
+    if(cross[cross_id].road_id[i]==-1)
     {
-      cout<<road_length[i][j]<<" ";
-      if(j==(cross_num-1))
-	cout<<endl;
-      // a[k][j][i] = map3d[i][j][k];
+      cross_weight[i]=0.00;
+      continue;
     }
-  }
-  
-  Dijkstra(cross_num);
-/*  int begin=car[car_id].situation.car_pass[0];
-  car[car_id].situation.car_pass.clear();
-  
-  int num=0;
-  vector<int>::iterator ite;
-  for (ite = path[begin-1][car[car_id].end-1].begin(); ite != path[begin-1][car[car_id].end-1].end(); ++ite) {
-    if (ite == path[begin-1][car[car_id].end-1].begin())
+    int road_d=road_in_to_i(cross[cross_id].road_id[i],road_num);
+    Node *p=road[road_d].Cur_Road.Head;
+    roadnum++;
+    if(p->next==nullptr)
     {
-      car[car_id].situation.car_pass.push_back(*ite);
-      cout <<car[car_id].situation.car_pass[num];
-      num++;
+      cross_weight[i]=0.00;
+      continue;
     }
     else
     {
-      car[car_id].situation.car_pass.push_back(*ite);
-      cout <<"->"<<car[car_id].situation.car_pass[num];
-      num++;
+      p=p->next;
+      while(p)
+      {
+	if(p->car_dirction!=cross_id)
+	  next_car_num++;
+	p=p->next;
+      }
     }
     
+    cross_weight[i]=(float)(next_car_num)/(float)(road[road_d].length*(road[road_d].channel+1));
+    cout<<"cross_weight["<<i<<"]"<<cross_weight[i]<<endl;
   }
-  cout<<endl;
-  */
-  
- // Search_car_path(car_id,begin,car[car_id].end);
+  for(int i=0;i<4;i++)
+  {
+    weight=weight+cross_weight[i];
+  }
+  //if(roadnum!=0)
+  weight=weight/(float)(roadnum);
+  return weight;
 }
-
-
 
 
 int main(int argc, char *argv[])
@@ -2060,7 +2097,7 @@ int main(int argc, char *argv[])
   std::cout << "crossPath is :" << cross_file << std::endl;
   // TODO:read input filebuf
   
-  std::string s;	
+  //std::string s;	
   
   int road_num=0,car_num=0,cross_num=0;
   std::cout<<"read start"<<std::endl;
@@ -2094,7 +2131,7 @@ int main(int argc, char *argv[])
 	     &(road[num].start),
 	     &(road[num].end),
 	     &(road[num].flag_bothway));
-       
+      
       num++;
     }
   }
@@ -2288,7 +2325,7 @@ int main(int argc, char *argv[])
       
       
       
-    // reload_Dijkstra(cross_num,car_num,15,16,0);
+      // reload_Dijkstra(cross_num,car_num,15,16,0);
       /******************************************************/
       /*****************cross all car*************************/
       /******************************************************/
@@ -2317,7 +2354,7 @@ int main(int argc, char *argv[])
       int cross_car[4];
       int T=0;
       int cross_a=0;
-      
+      float s[cross_num];
       /*	
        *	int x=lookfor_cross(6,car_samestartid);
        *	//for(int i=0;i<cross_num;i++)
@@ -2361,38 +2398,47 @@ int main(int argc, char *argv[])
 	    Cross_Sche(i , road_num , T);
 	  }
 	}
+	
+	
+	
+	
 	car_start_flag(T ,car_num);//判断那一辆车可以出发
-	
-	for(cross_a=0;cross_a<cross_num;cross_a++)
-	{
-	  if(count_car(road_num)<300)
-	    car_start_to_road(cross_a ,1,car_samestartid, road_num,T) ; //车辆出车库		
+	if(T<=2)
+	{		  
+	    for(cross_a=0;cross_a<cross_num;cross_a++)
+	    {
+	      if(count_car(road_num)<100)
+		car_start_to_road(cross_a ,1,car_samestartid, road_num,T) ; //车辆出车库		
+	    }
+	  
 	}
 	
-	
-	for(int k=0;k<road_num;k++)
+	for(int i=0;i<cross_num;i++)
 	{
-	  if(k == 0)
-	    cout << "Enter new flag display!" << endl;
-	  Node *p_l=road[k].Cur_Road.Head;
-	  // if(p_l->next != nullptr)
-	  // {
-	  p_l=p_l->next;
-	  while(p_l)
+	  s[i]=cross_car_num(i,road_num);	
+	  cout <<"cross_num= "<<i<<" weight= "<<s[i]<<endl;
+	}
+	
+// 	float s1[cross_num];
+// 	for(int i=0;i<cross_num;i++)
+// 	    s1[i]=s[i];
+// 	float_insertSort(s1,cross_num);
+	if(count_car(road_num)<400)
+	{
+	  for(int i=0;i<cross_num;i++)
 	  {
-	    cout <<"the flag of car " << p_l->car_id << " is "<< p_l->flag << " the road is "<< k;
-	    cout <<" the channel and position of car is " << p_l->car_channel << " and "<<p_l->car_position << endl;
-	    p_l=p_l->next;
+	    if(s[i]<=0.08)
+	      car_start_to_road(i ,1,car_samestartid, road_num,T);
 	  }
-	  // }
 	}
 	
 	
-	//if(T==3)break;
+	cout<<"out_car = "<<out_car<<endl;
+	//if(T==5)break;
 	cout<<" now T:"<<T<<endl;
 	
       }
-     
+      
       answer_file << "#(carid,StartTime,RoadId...)" << endl;
       for(int k=0;k<car_num; k++)
       {
@@ -2416,11 +2462,13 @@ int main(int argc, char *argv[])
 	
 	answer_file<<")"<<endl;
       }
-     
+      
       cout<<"finish T:"<<T<<endl; 
       cout<<"输出结束"<<endl;
-       
+      
       // TODO:write output file
       
       return 0; 
 }
+
+	

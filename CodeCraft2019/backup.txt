@@ -1,4 +1,41 @@
-   
+int cross_car_num(int cross_id,int road_num)
+{
+  int next_car_num=0;
+  for(int i=0;i<4;i++)
+  {
+    int road_d=road_in_to_i(cross[cross_id].road_id[i],road_num);
+    Node *p=road[road_d].Cur_Road.Head;
+    
+    if(p->next==nullptr)
+    {
+      continue;
+    }
+    else
+    {
+      p=p->next;
+      while(p)
+      {
+	if(p->car_dirction!=cross_id)
+	  next_car_num++;
+	p=p->next;
+      }
+    }
+  }
+  return next_car_num;
+}
+
+// 	for(int i=0;i<cross_num;i++)
+// 	{
+// 	  int s=cross_car_num(i,road_num);	
+// 	  cout <<"S="<<s<<endl;
+// 	}
+//if(T==3)break;
+
+
+
+
+
+
   /*
   vector<int> car_id;
   int next_road_id=0;
